@@ -2,13 +2,16 @@
  *
  * @brief sleep sycall wrapper
  *
- * @author Kartik Subramanian <ksubrama@andrew.cmu.edu>
- * @date 2008-10-31
+ * Authors: Foo Lai Choo <fchoo@andrew.cmu.edu>
+ *          Hui Jun Tay <htay@andrew.cmu.edu>
+ * Date:    Tues, 11 Nov 2014 01:51:29 -0400
  */
 
 #include <asm.h>
+#include <bits/swi.h>
 
-	.file "sleep.S"
+    .file "sleep.S"
 
 FUNC(sleep)
-	@ Add code here.  Put your names at the top.
+    swi SLEEP_SWI @make the system call
+    mov pc, lr

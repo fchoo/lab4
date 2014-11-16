@@ -2,16 +2,28 @@
  *
  * @brief write sycall wrapper
  *
- * @author Mike Kasick <mkasick@andrew.cmu.edu>
- * @date   Sun, 07 Oct 2007 01:53:46 -0400
- *
- * @author Kartik Subramanian <ksubrama@andrew.cmu.edu>
- * @date 2008-10-29
+ * Authors: Foo Lai Choo <fchoo@andrew.cmu.edu>
+ *          Hui Jun Tay <htay@andrew.cmu.edu>
+ * Date:    Tues, 11 Nov 2014 01:51:29 -0400
  */
 
 #include <asm.h>
+#include <bits/swi.h>
 
-	.file "write.S"
+    .file "write.S"
 
 FUNC(write)
-	@ Add code here.  Put your names at the top.
+    swi WRITE_SWI @make the system call
+
+    @ Return on success
+    cmp r0, #0 @success
+    movpl pc, lr @pl means >= 0
+
+    @ Store the absolute value of return value in errno
+    neg r0, r0
+    ldr r1, =errno
+    str r0, [r1]
+
+    @ Store -1 in return value
+    mov r0, #-1
+    mov pc, lr
