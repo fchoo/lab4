@@ -31,22 +31,22 @@ FUNC(irq_wrapper)
 	/* Switch to supervisor mode */
 	msr      cpsr_c, #(PSR_MODE_SVC | PSR_IRQ)
 
-	/* Diq the spsr_svc because svc-mode (SWI) entry code saves it with IRQ 
-	 * disabled.  I feel so dirty doing this.  
+	/* Diq the spsr_svc because svc-mode (SWI) entry code saves it with IRQ
+	 * disabled.  I feel so dirty doing this.
 	 * We need to diq spsr because we need atomic reload of pc and cpsr
 	 * during the return sequence in case we came in from user mode.
 	 */
 	msr      spsr, r0
 
-	/* Save lr, pop of r0, r1 from irq stack, and then put them all on the 
+	/* Save lr, pop of r0, r1 from irq stack, and then put them all on the
 	 * svc stack along with other caller-save registers.
 	 * The stack will look like:
 	 * {r0-r3, r8, ip, lr, pc} of source
 	 */
-	stmfd    sp!, {r1}
+	stmfd    sp!, {r1} @ Push lr_irq
 	ldr      r1, =irq_stack_lo
 	ldm      r1, {r0, r1}
-	stmfd    sp!, {r0-r3, r8, ip, lr}
+	stmfd    sp!, {r0-r3, r8, ip, lr} @ Push lr_svc
 
 	/* Recover user registers and save */
 	mrs      r0, spsr
@@ -56,7 +56,7 @@ FUNC(irq_wrapper)
 	/* Set up r8 correctly with u-boot dispatch table. */
 	ldr      ip, =global_data
 	ldr      r8, [ip]
-	
+
 	/* Call the IRQ handler in C. */
 	bl       irq_handler
 	@mov      r0, sp
@@ -67,7 +67,7 @@ FUNC(irq_wrapper)
 	ldmfd    sp, {r0, sp, lr}^
 	add      sp, sp, #12
 	msr      spsr, r0
-	ldmfd    sp!, {r0-r3, r8, ip, lr, pc}^
+	ldmfd    sp!, {r0-r3, r8, ip, lr, pc}^ @ pop lr_svc
 
 /*
  * We have exactly one IRQ save area.  This is shared across all tasks.  When an
