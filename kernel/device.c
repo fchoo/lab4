@@ -18,12 +18,12 @@
 
 /**
  * @brief Fake device maintainence structure.
- * Since our tasks are periodic, we can represent 
- * tasks with logical devices. 
- * These logical devices should be signalled periodically 
+ * Since our tasks are periodic, we can represent
+ * tasks with logical devices.
+ * These logical devices should be signalled periodically
  * so that you can instantiate a new job every time period.
- * Devices are signaled by calling dev_update 
- * on every timer interrupt. In dev_update check if it is 
+ * Devices are signaled by calling dev_update
+ * on every timer interrupt. In dev_update check if it is
  * time to create a tasks new job. If so, make the task runnable.
  * There is a wait queue for every device which contains the tcbs of
  * all tasks waiting on the device event to occur.
@@ -45,8 +45,14 @@ static dev_t devices[NUM_DEVICES];
  */
 void dev_init(void)
 {
-   /* the following line is to get rid of the warning and should not be needed */	
+   /* the following line is to get rid of the warning and should not be needed */
    devices[0]=devices[0];
+   // TODO:
+   // For all devices
+   // 1) I would thk we need time() as a parameter? Not sure when we are calling
+   //    this function
+   // 2) Initialize a tcb queue for dev.sleep_queue
+   // 3) Update dev.next_match = time + dev_freq;
 }
 
 
@@ -58,19 +64,27 @@ void dev_init(void)
  */
 void dev_wait(unsigned int dev __attribute__((unused)))
 {
-	
+    // TODO:
+    // 1) Insert task as parameter?
+    // 2) Check if dev.sleep_queue is full
+    // 3) Add to dev.sleep_queue if not full
 }
 
 
 /**
- * @brief Signals the occurrence of an event on all applicable devices. 
- * This function should be called on timer interrupts to determine that 
- * the interrupt corresponds to the event frequency of a device. If the 
- * interrupt corresponded to the interrupt frequency of a device, this 
- * function should ensure that the task is made ready to run 
+ * @brief Signals the occurrence of an event on all applicable devices.
+ * This function should be called on timer interrupts to determine that
+ * the interrupt corresponds to the event frequency of a device. If the
+ * interrupt corresponded to the interrupt frequency of a device, this
+ * function should ensure that the task is made ready to run
  */
 void dev_update(unsigned long millis __attribute__((unused)))
 {
-	
+    // Note: This is called by device interrupt!
+
+	// TODO: For all devices
+    // 1) Put all tasks in dev.sleep_queue to runqueue
+    // 2) Check if there is any tasks with higher priority
+    // 3) dispatch_save if there is one
 }
 
