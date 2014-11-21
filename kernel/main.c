@@ -16,14 +16,12 @@
 #include "include/swi_handler.h"
 #include "include/irq_handler.h"
 #include "include/user_setup.h"
+#include "include/config.h"
 
 // 0xe59ff014 (LDR pc, [pc, 0x14]) --> 0x014 through masking
 #define SWI_VECT_ADDR   0x08
 #define IRQ_VECT_ADDR   0x18
 #define PC_OFFSET       0x08
-
-// Cannot write to this address. kernel.bin loaded here. Stack grows down.
-#define USER_STACK_TOP  0xa3000000
 
 // (LDR pc, [pc, 0x000]) 0xe59ff000 --> 0x000 through masking
 #define LDR_PC_PC_INSTR 0xe59ff000
@@ -86,7 +84,7 @@ int kmain(int argc, char** argv, uint32_t table)
     int *irq_handler_addr = wire_handler(IRQ_VECT_ADDR, (int)&irq_handler, &irq_instr_1, &irq_instr_2);
 
     // Copy argc and argv to user stack in the right order.
-    int *spTop = ((int *) USER_STACK_TOP) - 1;
+    int *spTop = ((int *) USR_STACK) - 1;
     int i = 0;
     for (i = argc-1; i >= 0; i--) {
         *spTop = (int)argv[i];

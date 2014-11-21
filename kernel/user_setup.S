@@ -6,6 +6,7 @@
 
 
 #include <arm/psr.h>
+#include <config.h>
 
     .file   "user_setup.S"
     .text
@@ -23,7 +24,7 @@ user_setup:
     mov     sp, r0
 
     @ go to user program
-    ldr     pc, =0xa0000000
+    ldr     pc, =LOAD_ADDR
 
     @ Reload user program as backup. It should not reach here...
     sub     pc, pc, #8

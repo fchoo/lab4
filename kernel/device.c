@@ -47,7 +47,7 @@ void dev_init(void)
 {
    /* the following line is to get rid of the warning and should not be needed */
    devices[0]=devices[0];
-   // TODO:
+   // TODO: dev_init
    // For all devices
    // 1) I would thk we need time() as a parameter? Not sure when we are calling
    //    this function
@@ -64,7 +64,7 @@ void dev_init(void)
  */
 void dev_wait(unsigned int dev __attribute__((unused)))
 {
-    // TODO:
+    // TODO: dev_wait
     // 1) Insert task as parameter?
     // 2) Check if dev.sleep_queue is full
     // 3) Add to dev.sleep_queue if not full
@@ -82,7 +82,8 @@ void dev_update(unsigned long millis __attribute__((unused)))
 {
     // Note: This is called by device interrupt!
 
-	// TODO: For all devices
+	// TODO: dev_update
+    // For all devices
     // 1) Put all tasks in dev.sleep_queue to runqueue
     // 2) Check if there is any tasks with higher priority
     // 3) dispatch_save if there is one
