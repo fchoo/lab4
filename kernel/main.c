@@ -8,8 +8,6 @@
 
 #include <exports.h>
 
-#include <arm/psr.h>
-#include <arm/exception.h>
 #include <arm/interrupt.h>
 #include <arm/timer.h>
 #include <arm/reg.h>
