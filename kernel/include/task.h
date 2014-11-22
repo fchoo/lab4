@@ -58,7 +58,7 @@ struct tcb
 	int              holds_lock;         /**< 1 if the task is currently owning a lock */
 	volatile struct tcb* sleep_queue;    /**< If this task is asleep, this is its sleep queue link */
 	/** Embed the kernel stack here -- AAPCS wants 8 byte alignment */
-	uint32_t         kstack[OS_KSTACK_SIZE/sizeof(uint32_t)] 
+	uint32_t         kstack[OS_KSTACK_SIZE/sizeof(uint32_t)]
 	                     __attribute__((aligned(8)));
 	uint32_t         kstack_high[0];
 };

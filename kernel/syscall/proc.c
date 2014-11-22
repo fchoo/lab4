@@ -2,11 +2,9 @@
  *
  * @brief Implementation of `process' syscalls
  *
- * @author Mike Kasick <mkasick@andrew.cmu.edu>
- * @date   Sun, 14 Oct 2007 00:07:38 -0400
- *
- * @author Kartik Subramanian <ksubrama@andrew.cmu.edu>
- * @date 2008-11-12
+ * Authors: Foo Lai Choo <fchoo@andrew.cmu.edu>
+ *          Hui Jun Tay <htay@andrew.cmu.edu>
+ * Date:    Tues, 22 Nov 2014 01:51:29 -0400
  */
 
 #include <exports.h>
@@ -22,28 +20,52 @@
 #include <arm/physmem.h>
 #include <device.h>
 
-int task_create(task_t* tasks  __attribute__((unused)), size_t num_tasks  __attribute__((unused)))
+int task_create(task_t* tasks, size_t num_tasks)
 {
-    // TODO: task_create
-    // 1) Create a task_t array sorted_tasks based on num_tasks and tasks;
-    // 2) sched_init, runqueue_int, mutex_init
-    // 3) maybe dev_init?
-    // NOTE: DISABLE IRQ?
-    // 2) Call assign_schedule(sorted_tasks, num_tasks) -- sched/ub_test.c
-    // 3) Call allocate_tasks(sorted_tasks, num_tasks) -- sched/sched.c
-    // 4) Start device interrupt timer
-    // 5) Call dispatch_nosave() -- sched/ctx_switch.c
-    // NOTE: ENABLE IRQ?
+    // Unable to schedule the number of tasks
+    if (num_tasks > OS_AVAIL_TASKS) return -EINVAL;
 
-    return 1; /* remove this line after adding your code */
+    task_t* sorted_tasks[num_tasks];
+    size_t i ;
+    for (i=0; i<num_tasks; i++) {
+        sorted_tasks[i] = tasks + i; // Increment pointer and put into array
+    }
+
+    disable_interrupts(); // Disable interrupt when modifying shared structs
+    // UB Test
+    if (!assign_schedule(sorted_tasks, num_tasks)) return -ESCHED;
+
+    // Create tasks in kernel
+    allocate_tasks(sorted_tasks, num_tasks);
+
+    // TODO: Start device interrupt timer
+
+    // Start the highest priority task
+    dispatch_nosave();
+    // Re-enable interrupts at the end
+    enable_interrupts();
+    return 0;
 }
 
-int event_wait(unsigned int dev  __attribute__((unused)))
+int event_wait(unsigned int dev)
 {
-    //TODO: event_wait
-    //1) call dev_wait with device no. as parameter
-    //should never return
-    return 1; /* remove this line after adding your code */
+    // Invalid device number
+    if (dev >= NUM_DEVICES) return -EINVAL;
+    // Disable interrupt to prevent changes to cur_tcb
+    disable_interrupts();
+    // Get cur_tcb
+    tcb_t* cur_tcb = get_cur_tcb();
+    // Prevent tasks from waiting if they have a mutex.
+    if (cur_tcb->holds_lock != 0) return -EHOLDSLOCK;
+    // Restore device priority
+    cur_tcb->cur_prio = cur_tcb->native_prio;
+    // Put calling task back to device queue
+    dev_wait(dev);
+    // Switch to next highest priority task
+    dispatch_sleep();
+    // Re-enable interrupt at the end
+    enable_interrupts();
+    return 0;
 }
 
 /* An invalid syscall causes the kernel to exit. */

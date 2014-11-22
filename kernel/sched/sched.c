@@ -2,8 +2,9 @@
  *
  * @brief Top level implementation of the scheduler.
  *
- * @author Kartik Subramanian <ksubrama@andrew.cmu.edu>
- * @date 2008-11-20
+ * Authors: Foo Lai Choo <fchoo@andrew.cmu.edu>
+ *          Hui Jun Tay <htay@andrew.cmu.edu>
+ * Date:    Tues, 11 Nov 2014 01:51:29 -0400
  */
 
 #include <types.h>
@@ -22,15 +23,13 @@ tcb_t system_tcb[OS_MAX_TASKS]; /*allocate memory for system TCBs */
 
 void sched_init(task_t* main_task  __attribute__((unused)))
 {
-    // TODO: sched_init
-    //  1) initialize idle in system_tcb
 }
 
 /**
  * @brief This is the idle task that the system runs when no other task is runnable
  */
 
-static void __attribute__((unused)) idle(void)
+static void idle(void)
 {
 	 enable_interrupts();
 	 while(1);
@@ -49,13 +48,55 @@ static void __attribute__((unused)) idle(void)
  * @param tasks  A list of scheduled task descriptors.
  * @param size   The number of tasks is the list.
  */
-void allocate_tasks(task_t** tasks  __attribute__((unused)), size_t num_tasks  __attribute__((unused)))
+void allocate_tasks(task_t** tasks , size_t num_tasks)
 {
-	// TODO: allocate_tasks
-    //  For each task
-    //  2) Do some checks on task fields (in userspace, stack_pos is aligned)
-    //  3) Translate task to tcb
-    //  4) Store to system_tcb
-    //  5) Add to run queue
+    // Initialize run queue
+    runqueue_init();
+
+    // Initialize idle tcb
+    system_tcb[IDLE_PRIO].native_prio = IDLE_PRIO;
+    system_tcb[IDLE_PRIO].cur_prio = IDLE_PRIO;
+    system_tcb[IDLE_PRIO].holds_lock = 0;
+    system_tcb[IDLE_PRIO].sleep_queue = NULL;
+
+    system_tcb[IDLE_PRIO].context.r4 = (uint32_t)idle;
+    system_tcb[IDLE_PRIO].context.r5 = 0;
+    system_tcb[IDLE_PRIO].context.r6 = 0;
+    system_tcb[IDLE_PRIO].context.sp = system_tcb[IDLE_PRIO].kstack_high;
+    system_tcb[IDLE_PRIO].context.lr = 0;
+
+    dispatch_init(&system_tcb[IDLE_PRIO]);
+
+    // Erroneous amount of num task
+    if (num_tasks > OS_AVAIL_TASKS) return;
+
+    size_t prio = 0;
+    task_t *curTask;
+    // Assumes that the task list is sorted by priority previously by ub test
+    for (prio=0; prio<num_tasks; prio++) {
+        curTask = tasks[prio];
+        // check for erroneous tasks
+        // Note: AAPCS wants 8 byte alignment
+        if (!is_userSpace((uint32_t)curTask->lambda)  ||
+            !is_userSpace((uint32_t)curTask->data)       ||
+            !is_stackAligned((uint32_t)curTask->stack_pos)) {
+            return;
+        }
+
+        // Initialize tcb for task
+        system_tcb[prio].native_prio = prio;
+        system_tcb[prio].cur_prio = prio;
+        system_tcb[prio].holds_lock = 0;
+        system_tcb[prio].sleep_queue = NULL;
+        // Set up context for launch_task
+        system_tcb[prio].context.r4 = (uint32_t)curTask->lambda;
+        system_tcb[prio].context.r5 = (uint32_t)curTask->data;
+        system_tcb[prio].context.r6 = (uint32_t)curTask->stack_pos;
+        system_tcb[prio].context.sp = system_tcb[prio].kstack_high;
+        system_tcb[prio].context.lr = 0;
+        // Add task to run queue
+        runqueue_add(&system_tcb[prio], (uint8_t)prio);
+    }
+
 }
 
