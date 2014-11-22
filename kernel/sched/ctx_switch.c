@@ -29,6 +29,7 @@ static tcb_t* cur_tcb; /* use this if needed */
 void dispatch_init(tcb_t* idle)
 {
     cur_tcb = idle;
+    runqueue_add(cur_tcb, cur_tcb->cur_prio);
 }
 
 
