@@ -115,8 +115,10 @@ void runqueue_add(tcb_t* tcb, uint8_t prio)
  */
 tcb_t* runqueue_remove(uint8_t prio)
 {
-    // Error prio input
+    // Priority does not match task num
     if (prio > OS_MAX_TASKS - 1) return;
+    // Requested when there is no task of that priority waiting
+    else if (run_list[prio] == NULL) return;
 
     // Remove runnable task from run list.
     tcb_t *runnable = run_list[prio];
