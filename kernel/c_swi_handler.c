@@ -35,8 +35,7 @@ ssize_t C_SWI_Handler(int swiNum, int *regs) {
             count = (ssize_t)time_syscall();
 	    break;
         default:
-            printf("Error in ref C_SWI_Handler: Invalid SWI number.");
-            return -1; // never returns
+	    invalid_syscall(swiNum);
     }
 
     return count;
