@@ -11,12 +11,15 @@
 #include <arm/interrupt.h>
 #include <arm/timer.h>
 #include <arm/reg.h>
+#include <task.h>
+#include <kernel.h>
+#include <sched.h>
+#include <device.h>
+#include <assert.h>
 
-#include "include/globals.h"
-#include "include/swi_handler.h"
-#include "include/irq_handler.h"
-#include "include/user_setup.h"
-#include "include/config.h"
+#include <globals.h>
+#include <syscall.h>
+#include <user_setup.h>
 
 // 0xe59ff014 (LDR pc, [pc, 0x14]) --> 0x014 through masking
 #define SWI_VECT_ADDR   0x08
@@ -32,7 +35,7 @@
 #define BAD_CODE        0x0badc0de
 
 /* Checks the SWI Vector Table. */
-bool check_vector(int vect_addr) {
+bool_e check_vector(int vect_addr) {
     int vector_instr = *((int *)vect_addr);
 
     // Check if the offset is negative.
@@ -74,14 +77,14 @@ int kmain(int argc, char** argv, uint32_t table)
     }
     /** Wire in the SWI handler. **/
     int swi_instr_1, swi_instr_2;
-    int *swi_handler_addr = wire_handler(SWI_VECT_ADDR, (int)&swi_handler, &swi_instr_1, &swi_instr_2);
+    wire_handler(SWI_VECT_ADDR, (int)&swi_handler, &swi_instr_1, &swi_instr_2);
 
     if (check_vector(IRQ_VECT_ADDR) == FALSE) {
         return BAD_CODE;
     }
     /** Wire in the IRQ handler. **/
     int irq_instr_1, irq_instr_2;
-    int *irq_handler_addr = wire_handler(IRQ_VECT_ADDR, (int)&irq_handler, &irq_instr_1, &irq_instr_2);
+    wire_handler(IRQ_VECT_ADDR, (int)&irq_handler, &irq_instr_1, &irq_instr_2);
 
     // Copy argc and argv to user stack in the right order.
     int *spTop = ((int *) USR_STACK) - 1;
@@ -98,7 +101,7 @@ int kmain(int argc, char** argv, uint32_t table)
     // initialize and mask OS Timer register bits
     reg_set(OSTMR_OIER_ADDR, OSTMR_OIER_E0); // Only activate timer 0
     reg_write(OSTMR_OSCR_ADDR, 0); // Init timer count to 0
-    reg_write(OSTMR_OSMR_ADDR(0), TIMER_RES); // Set first match point
+    reg_write(OSTMR_OSMR_ADDR(0), OS_TIMER_RESOLUTION); // Set first match point
 
     reg_set(INT_ICMR_ADDR, 1<<INT_OSTMR_0);
     reg_clear(INT_ICLR_ADDR, 1<<INT_OSTMR_0);

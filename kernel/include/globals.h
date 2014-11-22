@@ -9,7 +9,6 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-typedef enum {FALSE, TRUE} bool;
 extern uint32_t global_data;
 extern volatile unsigned long systime;
 

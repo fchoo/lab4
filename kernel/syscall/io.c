@@ -30,10 +30,10 @@ ssize_t read_syscall(int fd __attribute__((unused)), void *buf __attribute__((un
 {
     // Check for invalid memory range or file descriptors
     // Check if it does not override IRQ stack
-    if (valid_addr((char *) buf, (int) count, SDRAM_START, SIRQ_START) == FALSE) {
-        exit_handler(-EFAULT);
+    if (valid_addr((char *) buf, (int) count, SDRAM_START, SDRAM_END) == FALSE) {
+        return -EFAULT;
     } else if (fd != STDIN_FILENO) {
-        exit_handler(-EBADF);
+        return -EBADF;
     }
 
     size_t i = 0;
@@ -75,11 +75,11 @@ ssize_t write_syscall(int fd  __attribute__((unused)), const void *buf  __attrib
 
     // Check if it does not override IRQ stack
     // Check for invalid memory range or file descriptors
-    if (valid_addr((char *) buf, (int) count, SDRAM_START, SIRQ_START) == FALSE &&
+    if (valid_addr((char *) buf, (int) count, SDRAM_START, SDRAM_END) == FALSE &&
         valid_addr((char *) buf, (int) count, SFROM_START, SFROM_END) == FALSE) {
-        exit_handler(-EFAULT);
+        return -EFAULT;
     } else if (fd != STDOUT_FILENO) {
-        exit_handler(-EBADF);
+        return -EBADF;
     }
 
     char *buffer = (char *) buf;
