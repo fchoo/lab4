@@ -15,7 +15,7 @@
 
 unsigned long time_syscall(void)
 {
-    unsigned long mstime = systime * OS_TIMER_RESOLUTION;
+    unsigned long mstime = systime * TIMER_INTERVAL;
     return mstime;
 }
 
@@ -29,7 +29,7 @@ unsigned long time_syscall(void)
  */
 void sleep_syscall(unsigned long millis  __attribute__((unused)))
 {
-    unsigned long end = systime + (millis/OS_TIMER_RESOLUTION);
+    unsigned long end = systime + (millis/TIMER_INTERVAL);
     while(systime < end) {
       //loop until done
     }

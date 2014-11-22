@@ -11,8 +11,8 @@
 #include <bits/fileno.h>
 #include <bits/swi.h>
 
-#include "include/globals.h"
-#include "include/syscall.h"
+#include <globals.h>
+#include <syscall.h>
 
 /* C_SWI_Handler uses SWI number to call the appropriate function. */
 ssize_t C_SWI_Handler(int swiNum, int *regs) {

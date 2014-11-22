@@ -11,15 +11,13 @@
 #include <arm/reg.h>
 #include <arm/timer.h>
 #include <arm/interrupt.h>
-
+#include <syscall.h>
 #include <globals.h>
-
 #include <config.h>
 
 
 /* C_IRQ_Handler */
 void C_IRQ_Handler() {
-	printf("ENTER C IRQ HANDLER!\n");	
     // Get OSMR0 bit
     uint32_t bit_OSMR0 = 1 << (INT_OSTMR_0);
     uint32_t has_OSMR0 = reg_read(INT_ICPR_ADDR) & bit_OSMR0;

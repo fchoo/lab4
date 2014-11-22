@@ -10,8 +10,10 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
+#define OSTMR_FREQ            3686400
+#define TIMER_INTERVAL	      10 
 #define OS_TICKS_PER_SEC        100    /* Set the number of ticks in one second */
-#define OS_TIMER_RESOLUTION     (1000/OS_TICKS_PER_SEC)  /* Timer resolution in ms */
+#define OS_TIMER_RESOLUTION     (OSTMR_FREQ/OS_TICKS_PER_SEC)  /* Timer resolution in ms */
 
 #define LOAD_ADDR  0xa0000000
 #define USR_STACK  0xa3000000

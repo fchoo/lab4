@@ -21,9 +21,10 @@ swi_handler:
     str     r2, [sp, #14*4]
 
     @mask the cpsr so irqs are enabled
-    mrs     r2, cpsr
-    bic     r2, r2, #0x80
-    msr     cpsr, r2
+    msr     cpsr_c, #(PSR_MODE_SVC | PSR_FIQ)
+    @mrs     r2, cpsr
+    @bic     r2, r2, #0x80
+    @msr     cpsr, r2
 
     @ Restore jmp table in r8
     ldr ip, =global_data
