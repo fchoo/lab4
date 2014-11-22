@@ -11,11 +11,12 @@
 #include <bits/errno.h>
 #include <arm/timer.h>
 #include <syscall.h>
-
+#include <globals.h>
 
 unsigned long time_syscall(void)
 {
- return 1; /* remove this line after adding your code here */	
+    unsigned long mstime = systime * OS_TIMER_RESOLUTION;
+    return mstime;
 }
 
 
@@ -28,5 +29,9 @@ unsigned long time_syscall(void)
  */
 void sleep_syscall(unsigned long millis  __attribute__((unused)))
 {
+    unsigned long end = systime + (millis/OS_TIMER_RESOLUTION);
+    while(systime < end) {
+      //loop until done
+    }
 	
 }
