@@ -1,5 +1,5 @@
 /** @file proc.c
- * 
+ *
  * @brief Implementation of `process' syscalls
  *
  * @author Mike Kasick <mkasick@andrew.cmu.edu>
@@ -24,12 +24,24 @@
 
 int task_create(task_t* tasks  __attribute__((unused)), size_t num_tasks  __attribute__((unused)))
 {
-  return 1; /* remove this line after adding your code */
+    // TODO: task_create
+    // 1) Create a task_t array sorted_tasks based on num_tasks and tasks;
+    // 2) sched_init, runqueue_int, mutex_init
+    // 3) maybe dev_init?
+    // NOTE: DISABLE IRQ?
+    // 2) Call assign_schedule(sorted_tasks, num_tasks) -- sched/ub_test.c
+    // 3) Call allocate_tasks(sorted_tasks, num_tasks) -- sched/sched.c
+    // 4) Start device interrupt timer
+    // 5) Call dispatch_nosave() -- sched/ctx_switch.c
+    // NOTE: ENABLE IRQ?
+
+    return 1; /* remove this line after adding your code */
 }
 
 int event_wait(unsigned int dev  __attribute__((unused)))
 {
-  return 1; /* remove this line after adding your code */	
+
+    return 1; /* remove this line after adding your code */
 }
 
 /* An invalid syscall causes the kernel to exit. */
