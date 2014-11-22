@@ -24,3 +24,13 @@ int task_create(task_t* tasks, size_t num_tasks);
 int event_wait(unsigned int dev);
 
 #endif /* SYSCALL_H */
+
+#ifndef SWI_HANDLER_H
+#define SWI_HANDLER_H
+int swi_handler(int swi_instruction);
+#endif
+
+#ifndef C_SWI_HANDLER_H
+#define C_SWI_HANDLER_H
+ssize_t C_SWI_Handler(int swiNum, int *regs);
+#endif
