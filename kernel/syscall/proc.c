@@ -40,7 +40,9 @@ int task_create(task_t* tasks  __attribute__((unused)), size_t num_tasks  __attr
 
 int event_wait(unsigned int dev  __attribute__((unused)))
 {
-
+    //TODO: event_wait
+    //1) call dev_wait with device no. as parameter
+    //should never return
     return 1; /* remove this line after adding your code */
 }
 

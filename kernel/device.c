@@ -68,6 +68,7 @@ void dev_wait(unsigned int dev __attribute__((unused)))
     // 1) Insert task as parameter?
     // 2) Check if dev.sleep_queue is full
     // 3) Add to dev.sleep_queue if not full
+    // 4) call dispatch_sleep
 }
 
 

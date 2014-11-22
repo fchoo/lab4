@@ -53,6 +53,13 @@ void dispatch_save(void)
  */
 void dispatch_nosave(void)
 {
+    //disable interrupts
+    disable_interrupts();
+    
+
+    ctx_switch_half();
+    //renable interupts
+    enable_interrupts();
 
 }
 
@@ -65,7 +72,9 @@ void dispatch_nosave(void)
  */
 void dispatch_sleep(void)
 {
-	
+	//1) get curr list of runnables
+	//2) if list not empty, context switch to next highest prior task
+	//3) if list empty, context switch to the idle task
 }
 
 /**
