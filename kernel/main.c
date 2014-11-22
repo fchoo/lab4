@@ -52,7 +52,7 @@ bool_e check_vector(int vect_addr) {
 }
 
 // Wire in the new handler and return the jmp table addr
-int *wire_handler(int vec_addr, int new_handler_addr, int *old_instr_1, int *old_instr_2) {
+void *wire_handler(int vec_addr, int new_handler_addr, int *old_instr_1, int *old_instr_2) {
     // Jump offset already incorporates PC offset. Usually 0x10 or 0x14.
     int jmp_offset = (*((int *) vec_addr))&(LDR_OFFSET_MASK);
     // &S_Handler" in Jump Table.
