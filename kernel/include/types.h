@@ -1,6 +1,6 @@
 /**
  * @file   types.h
- * 
+ *
  * @brief  Standard Integer Types and Limits
  *         Corresponds to ANSI C99 stdint.h, stddef.h and limits.h
  *
@@ -29,6 +29,8 @@ typedef enum bool_e
 	TRUE
 } bool_e;
 
+#define NULL 0
+
 typedef unsigned long       size_t;
 typedef long                ssize_t;
 
@@ -50,6 +52,7 @@ typedef int32_t             intptr_t;
 typedef uint32_t            uintptr_t;
 
 #endif /* ASSEMBLER */
+
 
 /* --- Sizes --- */
 
