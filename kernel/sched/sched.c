@@ -50,6 +50,9 @@ static void idle(void)
  */
 void allocate_tasks(task_t** tasks , size_t num_tasks)
 {
+    // Initialize run queue
+    runqueue_init();
+
     // Initialize idle tcb
     system_tcb[IDLE_PRIO].native_prio = IDLE_PRIO;
     system_tcb[IDLE_PRIO].cur_prio = IDLE_PRIO;
