@@ -105,7 +105,7 @@ void dev_update(unsigned long millis)
                 // Add to run queue
 	        printf("add to runqueue\n");
                 runqueue_add(head, head->native_prio);
-	        head = head->sleep_queue;
+                head = head->sleep_queue;
             }
             // Update next match for the device
             devices[i].next_match += dev_freq[i];

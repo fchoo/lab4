@@ -78,11 +78,10 @@ void allocate_tasks(task_t** tasks , size_t num_tasks)
         // check for erroneous tasks
         // Note: AAPCS wants 8 byte alignment
         if (!is_userSpace((uint32_t)curTask->lambda)  ||
+            !is_userSpace((uint32_t)curTask->stack_pos)    ||
             !is_stackAligned((uint32_t)curTask->stack_pos)) {
-            printf("lambda %x data %x stack_pos %x\n", curTask->lambda, curTask->data, curTask->stack_pos);
             return;
         }
-        printf("passed all checks\n");
 
         // Initialize tcb for task
         system_tcb[prio].native_prio = prio;
