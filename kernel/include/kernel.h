@@ -11,6 +11,9 @@
 
 #include <types.h>
 
+
+extern unsigned long dev_offset;
+extern volatile unsigned long systime;
 extern uint32_t global_data;
 int enter_user_mode(void);
 int valid_addr(const void* start, size_t count, uintptr_t base, uintptr_t bound);

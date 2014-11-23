@@ -8,5 +8,5 @@
 
 #include <types.h>
 
-uint32_t global_data;
 volatile unsigned long systime;
+unsigned long dev_offset;
