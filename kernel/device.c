@@ -72,11 +72,6 @@ void dev_wait(unsigned int dev)
         while (dev_queue->sleep_queue != NULL) {
             dev_queue = dev_queue->sleep_queue;
         }
-        // Avoid infinite loop where tcb points to itself
-        if (get_cur_tcb() == dev_queue) {
-            printf("[ERROR] Circular linked list detected.\n");
-            return;
-        }
         dev_queue->sleep_queue = get_cur_tcb();
     } else {
         // Insert into empty list
