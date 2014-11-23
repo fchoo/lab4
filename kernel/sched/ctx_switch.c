@@ -76,6 +76,7 @@ void dispatch_save(void)
  */
 void dispatch_nosave(void)
 {
+    printf("dispatch nosave");
     //disable interrupts
     disable_interrupts();
     
