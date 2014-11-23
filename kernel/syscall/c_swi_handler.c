@@ -25,15 +25,30 @@ ssize_t C_SWI_Handler(int swiNum, int *regs) {
         // ssize_t write(int fd, const void *buf, size_t count);
         case WRITE_SWI:
             count = write_syscall((int) regs[0], (void *) regs[1], (size_t) regs[2]);
-            break;      
+            break;
         // void sleep(unsigned long millis)
         case SLEEP_SWI:
             sleep_syscall((unsigned long) regs[0]);
-	    break;
-	// unsigned long time()
+            break;
+	    // unsigned long time()
         case TIME_SWI:
             count = (ssize_t)time_syscall();
-	    break;
+            break;
+        // int task_create(task_t* tasks, size_t num_tasks)
+        case CREATE_SWI:
+            count = task_create((task_t*)regs[0], (size_t)regs[1]);
+            break;
+        // int event_wait(unsigned int dev_num)
+        case EVENT_WAIT:
+            count = event_wait((unsigned int)regs[0]);
+            break;
+        case MUTEX_CREATE:
+            break;
+        case MUTEX_LOCK:
+            break;
+        case MUTEX_UNLOCK:
+            break;
+
         default:
 	    invalid_syscall(swiNum);
     }
