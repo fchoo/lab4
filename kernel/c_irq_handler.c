@@ -16,7 +16,7 @@
 #include <config.h>
 #include <device.h>
 
-#define DEV_INTERVAL 50
+#define DEV_INTERVAL 5
 
 /* C_IRQ_Handler */
 void C_IRQ_Handler() {

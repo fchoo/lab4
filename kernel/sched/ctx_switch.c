@@ -80,11 +80,14 @@ void dispatch_nosave(void)
     disable_interrupts();
 
     //get the tcb of task (63 is the idle task)
+    printf("highest prio %d\n", highest_prio());
     tcb_t* next_tcb = runqueue_remove(highest_prio());
     cur_tcb = next_tcb;
 
     //get new context
     sched_context_t  cont = cur_tcb->context;
+
+    printf("data %x\n", cont.r5);
     ctx_switch_half(&cont);
 
 }
