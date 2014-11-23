@@ -1,9 +1,9 @@
 /**
  * @file device.c
  *
- * @brief Implements simulated devices.
- * @author Kartik Subramanian <ksubrama@andrew.cmu.edu>
- * @date 2008-12-01
+ * Authors: Foo Lai Choo <fchoo@andrew.cmu.edu>
+ *          Hui Jun Tay <htay@andrew.cmu.edu>
+ * Date:    Tues, 22 Nov 2014 01:51:29 -0400
  */
 
 #include <types.h>
@@ -43,16 +43,14 @@ static dev_t devices[NUM_DEVICES];
 /**
  * @brief Initialize the sleep queues and match values for all devices.
  */
-void dev_init(void)
+void dev_init(unsigned long millis)
 {
-   /* the following line is to get rid of the warning and should not be needed */
-   devices[0]=devices[0];
-   // TODO: dev_init
-   // For all devices
-   // 1) I would thk we need time() as a parameter? Not sure when we are calling
-   //    this function
-   // 2) Initialize a tcb queue for dev.sleep_queue
-   // 3) Update dev.next_match = time + dev_freq;
+    int i;
+    // For each device initialize sleep queues and match values
+    for (i=0; i<NUM_DEVICES; i++) {
+        devices[i].sleep_queue = NULL;
+        devices[i].next_match = millis + dev_freq[i];
+    }
 }
 
 
@@ -62,13 +60,21 @@ void dev_init(void)
  *
  * @param dev  Device number.
  */
-void dev_wait(unsigned int dev __attribute__((unused)))
+void dev_wait(unsigned int dev)
 {
-    // TODO: dev_wait
-    // 1) Insert task as parameter?
-    // 2) Check if dev.sleep_queue is full
-    // 3) Add to dev.sleep_queue if not full
-    // 4) call dispatch_sleep
+    // Invalid device number
+    if (dev >= NUM_DEVICES) return;
+    // Append current tcb to the end of device sleep queue
+    if (devices[dev].sleep_queue != NULL) {
+        tcb_t *dev_queue = devices[dev].sleep_queue;
+        while (dev_queue->sleep_queue != NULL) {
+            dev_queue = dev_queue->sleep_queue;
+        }
+        dev_queue->sleep_queue = get_cur_tcb();
+    } else {
+        // Insert into empty list
+        devices[dev].sleep_queue = get_cur_tcb();
+    }
 }
 
 
@@ -79,14 +85,30 @@ void dev_wait(unsigned int dev __attribute__((unused)))
  * interrupt corresponded to the interrupt frequency of a device, this
  * function should ensure that the task is made ready to run
  */
-void dev_update(unsigned long millis __attribute__((unused)))
+void dev_update(unsigned long millis)
 {
-    // Note: This is called by device interrupt!
+    int i;
+    tcb_t *head;
+    bool_e hasHigherPrio = FALSE;
 
-	// TODO: dev_update
-    // For all devices
-    // 1) Put all tasks in dev.sleep_queue to runqueue
-    // 2) Check if there is any tasks with higher priority
-    // 3) dispatch_save if there is one
+    uint8_t curPrio = get_cur_prio();
+
+    for (i=0; i<NUM_DEVICES; i++) {
+        // if device is matched
+        if (devices[i].next_match <= millis) {
+            head = devices[i].sleep_queue;
+            while (head != NULL) {
+                // Check if there is a higher priority task
+                if (head->cur_prio < curPrio) hasHigherPrio = TRUE;
+                // Add to run queue
+                runqueue_add(head, head->native_prio);
+            }
+            // Update next match for the device
+            devices[i].next_match += dev_freq[i];
+        }
+    }
+    // Context switch to higher priority
+    if (hasHigherPrio) dispatch_save();
+
 }
 

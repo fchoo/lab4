@@ -2,8 +2,9 @@
  *
  * @brief Declares task maintainence structures.
  *
- * @author Kartik Subramanian <ksubrama@andrew.cmu.edu>
- * @date   2008-11-19
+ * Authors: Foo Lai Choo <fchoo@andrew.cmu.edu>
+ *          Hui Jun Tay <htay@andrew.cmu.edu>
+ * Date:    Tues, 22 Nov 2014 01:51:29 -0400
  */
 
 #ifndef TASK_H
@@ -11,6 +12,8 @@
 
 #include <types.h>
 #include <config.h>
+
+#include <inline.h>
 
 /**
  * A task takes an arbitrary parameter and begins execution.
@@ -63,6 +66,5 @@ struct tcb
 	uint32_t         kstack_high[0];
 };
 typedef volatile struct tcb tcb_t;
-
 
 #endif /* TASK_H */

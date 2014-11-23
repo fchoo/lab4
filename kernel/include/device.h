@@ -6,8 +6,9 @@
  * with the given periodicity.  Each condition variable also has an associated
  * mutex of the same index.
  *
- * @author Kartik Subramanian <ksubrama@andrew.cmu.edu>
- * @date   2008-12-01
+ * Authors: Foo Lai Choo <fchoo@andrew.cmu.edu>
+ *          Hui Jun Tay <htay@andrew.cmu.edu>
+ * Date:    Tues, 22 Nov 2014 01:51:29 -0400
  */
 
 #ifndef _DEVICE_H_
@@ -17,7 +18,7 @@
 
 extern const unsigned long dev_freq[NUM_DEVICES];
 
-void dev_init(void);
+void dev_init(unsigned long millis);
 void dev_wait(unsigned int dev);
 void dev_update(unsigned long num_millis);
 

@@ -39,7 +39,7 @@ int task_create(task_t* tasks, size_t num_tasks)
     allocate_tasks(sorted_tasks, num_tasks);
 
     // TODO: Start device interrupt timer
-
+    dev_init(time_syscall());
     // Start the highest priority task
     dispatch_nosave();
     // Re-enable interrupts at the end

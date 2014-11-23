@@ -14,6 +14,7 @@
 #include <syscall.h>
 #include <globals.h>
 #include <config.h>
+#include <device.h>
 
 #define DEV_INTERVAL 50
 

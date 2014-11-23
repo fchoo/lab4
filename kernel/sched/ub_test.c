@@ -2,8 +2,9 @@
  *
  * @brief The UB Test for basic schedulability
  *
- * @author Kartik Subramanian <ksubrama@andrew.cmu.edu>
- * @date 2008-11-20
+ * Authors: Foo Lai Choo <fchoo@andrew.cmu.edu>
+ *          Hui Jun Tay <htay@andrew.cmu.edu>
+ * Date:    Tues, 22 Nov 2014 01:51:29 -0400
  */
 
 //#define DEBUG 0
@@ -13,6 +14,7 @@
 #include <exports.h>
 #endif
 
+#include <types.h>
 
 /**
  * @brief Perform UB Test and reorder the task list.
@@ -29,7 +31,7 @@
  */
 int assign_schedule(task_t** tasks, size_t num_tasks)
 {
-
+    if (tasks == NULL || num_tasks == 0) return 0; // remove once implemented
 	return 1; // fix this; dummy return to prevent compiler warnings
 }
 
