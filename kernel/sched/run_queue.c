@@ -103,8 +103,6 @@ void runqueue_add(tcb_t* tcb, uint8_t prio)
     uint8_t OSTCBX = prio & 0x07;
     group_run_bits |= (1 << OSTCBY);
     run_bits[OSTCBY] |= (1 << OSTCBX);
-    printf("group run bits %x\n", group_run_bits);
-    printf("run bits %x\n", run_bits);
 }
 
 

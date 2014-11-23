@@ -103,7 +103,6 @@ void dev_update(unsigned long millis)
                 // Check if there is a higher priority task
                 if (head->cur_prio < curPrio) hasHigherPrio = TRUE;
                 // Add to run queue
-	        printf("add to runqueue\n");
                 runqueue_add(head, head->native_prio);
                 head = head->sleep_queue;
             }
