@@ -78,11 +78,10 @@ void allocate_tasks(task_t** tasks , size_t num_tasks)
         // check for erroneous tasks
         // Note: AAPCS wants 8 byte alignment
         if (!is_userSpace((uint32_t)curTask->lambda)  ||
-            !is_userSpace((uint32_t)curTask->data)       ||
+            !is_userSpace((uint32_t)curTask->stack_pos)    ||
             !is_stackAligned((uint32_t)curTask->stack_pos)) {
             return;
         }
-
         // Initialize tcb for task
         system_tcb[prio].native_prio = prio;
         system_tcb[prio].cur_prio = prio;

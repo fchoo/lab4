@@ -102,6 +102,7 @@ void dev_update(unsigned long millis)
                 if (head->cur_prio < curPrio) hasHigherPrio = TRUE;
                 // Add to run queue
                 runqueue_add(head, head->native_prio);
+                head = head->sleep_queue;
             }
             // Update next match for the device
             devices[i].next_match += dev_freq[i];
