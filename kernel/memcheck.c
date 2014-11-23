@@ -62,7 +62,7 @@ int is_userSpace(uint32_t addr)
  */
 int is_stackAligned(uint32_t addr)
 {
-    if (!(addr & 0x7)) return 0;
+    if ((addr & 0x7)) return 0;
     return 1;
 }
 
