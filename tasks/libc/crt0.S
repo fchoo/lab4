@@ -2,9 +2,9 @@
  *
  * @brief Execution startup routine
  *
- * @authors Foo Lai Choo <wkuan@andrew.cmu.edu>
- *          Hui Jun Tay <chinyano@andrew.cmu.edu>
- * @date    11/16/2014
+ * @authors Foo Lai Choo <fchoo@andrew.cmu.edu>
+ *          Hui Jun Tay <htay@andrew.cmu.edu>
+ * @date    11/22/2014
  */
 
 
