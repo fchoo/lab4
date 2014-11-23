@@ -17,6 +17,7 @@
 /* C_SWI_Handler uses SWI number to call the appropriate function. */
 ssize_t C_SWI_Handler(int swiNum, int *regs) {
     ssize_t count = 0;
+    printf("entering swi handling w/ tag %d \n", swiNum);
     switch (swiNum) {
         // ssize_t read(int fd, void *buf, size_t count);
         case READ_SWI:

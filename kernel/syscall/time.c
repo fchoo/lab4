@@ -29,9 +29,14 @@ unsigned long time_syscall(void)
  */
 void sleep_syscall(unsigned long millis  __attribute__((unused)))
 {
-    unsigned long end = systime + (millis/TIMER_INTERVAL);
-    while(systime < end) {
-      //loop until done
+    unsigned long end = (millis/TIMER_INTERVAL);
+    unsigned long currtime = systime;
+    while(end > 0) {
+      //decrease counter everytime systime changes by a unit
+      if(systime > currtime) {
+          end--;
+          currtime = systime;
+      }
     }
 	
 }
