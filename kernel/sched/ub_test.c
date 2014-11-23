@@ -1,5 +1,5 @@
 /** @file ub_test.c
- * 
+ *
  * @brief The UB Test for basic schedulability
  *
  * @author Kartik Subramanian <ksubrama@andrew.cmu.edu>
@@ -13,7 +13,7 @@
 #include <exports.h>
 #endif
 
- 
+
 /**
  * @brief Perform UB Test and reorder the task list.
  *
@@ -27,11 +27,11 @@
  * @return 0  The test failed.
  * @return 1  Test succeeded.  The tasks are now in order.
  */
-int assign_schedule(task_t** tasks  __attribute__((unused)), size_t num_tasks  __attribute__((unused)))
+int assign_schedule(task_t** tasks, size_t num_tasks)
 {
 
-	return 1; // fix this; dummy return to prevent compiler warnings	
+	return 1; // fix this; dummy return to prevent compiler warnings
 }
-	
+
 
 
