@@ -106,6 +106,7 @@ void dev_update(unsigned long millis)
                 runqueue_add(head, head->native_prio);
                 head = head->sleep_queue;
             }
+            devices[i].sleep_queue = NULL;
             // Update next match for the device
             devices[i].next_match += dev_freq[i];
         }
