@@ -4,6 +4,8 @@
 @          Hui Jun Tay <htay@andrew.cmu.edu>
 @ Date:    Tues, 11 Nov 2014 01:51:29 -0400
 
+#include <arm/psr.h>
+
     .extern C_SWI_Handler
 
     .file   "swi_handler.S"
