@@ -10,7 +10,8 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-volatile unsigned long systime;
-unsigned long dev_offset;
+extern uint32_t global_data;
+extern volatile unsigned long systime;
+extern unsigned long dev_offset;
 
 #endif /* GLOBALS_H */                   

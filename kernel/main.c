@@ -14,6 +14,7 @@
 #include <task.h>
 #include <kernel.h>
 #include <sched.h>
+#include <globals.h>
 #include <device.h>
 #include <assert.h>
 
