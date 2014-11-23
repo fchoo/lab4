@@ -14,10 +14,10 @@
 #include <task.h>
 #include <kernel.h>
 #include <sched.h>
+#include <globals.h>
 #include <device.h>
 #include <assert.h>
 
-#include <globals.h>
 #include <syscall.h>
 #include <user_setup.h>
 
@@ -33,6 +33,9 @@
 #define LDR_PC_BACK1    0xe51ff004 // ldr pc, [pc, #-4]
 
 #define BAD_CODE        0x0badc0de
+
+extern unsigned long dev_offset;
+extern volatile unsigned long systime;
 
 /* Checks the SWI Vector Table. */
 bool_e check_vector(int vect_addr) {

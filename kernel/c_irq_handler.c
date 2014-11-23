@@ -15,6 +15,7 @@
 #include <globals.h>
 #include <config.h>
 
+#define DEV_INTERVAL 50
 
 /* C_IRQ_Handler */
 void C_IRQ_Handler() {
@@ -32,4 +33,9 @@ void C_IRQ_Handler() {
         // Update system time
         systime++;
     }
+
+    if ((systime - dev_offset) % DEV_INTERVAL == 0) {
+        dev_update(systime * TIMER_INTERVAL);
+    }
+
 }
