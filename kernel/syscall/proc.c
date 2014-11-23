@@ -23,7 +23,6 @@
 int task_create(task_t* tasks, size_t num_tasks)
 {
     // Unable to schedule the number of tasks
-    printf("scheduling tasks\n");
     if (num_tasks > OS_AVAIL_TASKS) return -EINVAL;
 
     task_t* sorted_tasks[num_tasks];
@@ -35,8 +34,6 @@ int task_create(task_t* tasks, size_t num_tasks)
     disable_interrupts(); // Disable interrupt when modifying shared structs
     // UB Test
     if (!assign_schedule(sorted_tasks, num_tasks)) return -ESCHED;
-
-    printf("passed ubtest, allocating tasks\n");
 
     // Create tasks in kernel
     allocate_tasks(sorted_tasks, num_tasks);

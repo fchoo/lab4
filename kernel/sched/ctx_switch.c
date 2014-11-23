@@ -47,7 +47,7 @@ void dispatch_save(void)
 
     //disable interrupts
     disable_interrupts();
-    
+
     //get the tcb of task (63 is the idle task)
     tcb_t* next_tcb = runqueue_remove(highest_prio());
 
@@ -76,10 +76,9 @@ void dispatch_save(void)
  */
 void dispatch_nosave(void)
 {
-    printf("dispatch nosave");
     //disable interrupts
     disable_interrupts();
-    
+
     //get the tcb of task (63 is the idle task)
     tcb_t* next_tcb = runqueue_remove(highest_prio());
     cur_tcb = next_tcb;
@@ -105,7 +104,7 @@ void dispatch_sleep(void)
 
     //disable interrupts
     disable_interrupts();
-    
+
     //get the tcb of task (63 is the idle task)
     tcb_t* next_tcb = runqueue_remove(highest_prio());
 
