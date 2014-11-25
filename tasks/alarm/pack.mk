@@ -1,0 +1,6 @@
+PROGS_ALARM_OBJS := alarm.o
+PROGS_ALARM_OBJS := $(PROGS_ALARM_OBJS:%=$(TDIR)/alarm/%)
+ALL_OBJS += $(PROGS_ALARM_OBJS)
+
+$(TDIR)/bin/alarm : $(TSTART) $(PROGS_ALARM_OBJS) $(TLIBC)
+
