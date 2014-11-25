@@ -44,7 +44,7 @@ void dispatch_init(tcb_t* idle)
  */
 void dispatch_save(void)
 {
-
+	printf("dsave\n");
     //disable interrupts
     disable_interrupts();
 
@@ -76,6 +76,7 @@ void dispatch_save(void)
  */
 void dispatch_nosave(void)
 {
+	printf("nosave!\n");
     //disable interrupts
     disable_interrupts();
 
@@ -99,6 +100,7 @@ void dispatch_nosave(void)
  */
 void dispatch_sleep(void)
 {
+	printf("sleep!\n");
 	//1) get curr list of runnables
 	//2) if list not empty, context switch to next highest prior task
 	//3) if list empty, context switch to the idle task
@@ -115,8 +117,14 @@ void dispatch_sleep(void)
     cur_tcb = next_tcb;
     sched_context_t  contxt_new = cur_tcb->context;
 
+    printf("lr %x sp %x r4 %x r5 %x r6 %x r7 %x r8 %x r9 %x r10 %x\n", contxt_new.lr, contxt_new.sp, contxt_new.r4, contxt_new.r5, 
+			contxt_new.r6, contxt_new.r7, contxt_new.r8, contxt_new.r9, 
+			contxt_new.r10);
+
+
     //context switch full
     ctx_switch_full(&contxt_new, &contxt_old);
+
 
     //renable interupts
     enable_interrupts();
