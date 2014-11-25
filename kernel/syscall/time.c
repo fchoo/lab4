@@ -25,19 +25,19 @@ unsigned long time_syscall(void)
  *
  * @param millis  The number of milliseconds to sleep.
  *
- * 
+ *
  */
-void sleep_syscall(unsigned long millis  __attribute__((unused)))
+void sleep_syscall(unsigned long millis)
 {
     unsigned long end = (millis/TIMER_INTERVAL);
     unsigned long currtime = systime;
     while(end > 0) {
       //decrease counter everytime systime changes by a unit
       if(systime > currtime) {
-	  printf("%ds", end);
+	        printf("%ds ", end);
           end = end - 1;
           currtime = systime;
       }
     }
-	
+
 }
