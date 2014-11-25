@@ -44,27 +44,18 @@ void dispatch_init(tcb_t* idle)
  */
 void dispatch_save(void)
 {
-	printf("dsave\n");
-    //disable interrupts
-    disable_interrupts();
-
-    //get the tcb of task (63 is the idle task)
-    tcb_t* next_tcb = runqueue_remove(highest_prio());
-
-    //save curr tcb add back to runnables
+	printf("[INFO] Calling dispatch_save\n");
+    // get the tcb of task (63 is the idle task)
+    tcb_t *next_tcb = runqueue_remove(highest_prio());
+    // add curr tcb add back to runnables
     runqueue_add(cur_tcb, get_cur_prio());
 
-    //get new and old contexts
-    sched_context_t  contxt_old = cur_tcb->context;
-
+    // Update cur_tcb
+    tcb_t *old_tcb = cur_tcb;
     cur_tcb = next_tcb;
-    sched_context_t  contxt_new = cur_tcb->context;
 
     //context switch full
-    ctx_switch_full(&contxt_new, &contxt_old);
-
-    //renable interupts
-    enable_interrupts();
+    ctx_switch_full(&(cur_tcb->context), &(old_tcb->context));
 
 }
 
@@ -76,19 +67,13 @@ void dispatch_save(void)
  */
 void dispatch_nosave(void)
 {
-	printf("nosave!\n");
-    //disable interrupts
-    disable_interrupts();
+	printf("[INFO] Calling dispatch_nosave!\n");
 
     //get the tcb of task (63 is the idle task)
     tcb_t* next_tcb = runqueue_remove(highest_prio());
     cur_tcb = next_tcb;
 
-    //get new context
-    sched_context_t  cont = cur_tcb->context;
-
-    ctx_switch_half(&cont);
-
+    ctx_switch_half(&(cur_tcb->context));
 }
 
 
@@ -117,8 +102,8 @@ void dispatch_sleep(void)
     cur_tcb = next_tcb;
     sched_context_t  contxt_new = cur_tcb->context;
 
-    printf("lr %x sp %x r4 %x r5 %x r6 %x r7 %x r8 %x r9 %x r10 %x\n", contxt_new.lr, contxt_new.sp, contxt_new.r4, contxt_new.r5, 
-			contxt_new.r6, contxt_new.r7, contxt_new.r8, contxt_new.r9, 
+    printf("lr %x sp %x r4 %x r5 %x r6 %x r7 %x r8 %x r9 %x r10 %x\n", contxt_new.lr, contxt_new.sp, contxt_new.r4, contxt_new.r5,
+			contxt_new.r6, contxt_new.r7, contxt_new.r8, contxt_new.r9,
 			contxt_new.r10);
 
 
