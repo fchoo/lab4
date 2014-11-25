@@ -114,6 +114,9 @@ void dispatch_sleep(void)
     //get old and new contexts
     sched_context_t  contxt_old = cur_tcb->context;
 
+    printf("lr %x sp %x r4 %x r5 %x r6 %x r7 %x r8 %x r9 %x r10 %x\n", contxt_old.lr, contxt_old.sp, contxt_old.r4, contxt_old.r5, 
+			contxt_old.r6, contxt_old.r7, contxt_old.r8, contxt_old.r9, 
+			contxt_old.r10);
     cur_tcb = next_tcb;
     sched_context_t  contxt_new = cur_tcb->context;
 
