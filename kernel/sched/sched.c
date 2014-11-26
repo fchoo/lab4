@@ -47,8 +47,12 @@ static void idle(void)
  *
  * @param tasks  A list of scheduled task descriptors.
  * @param size   The number of tasks is the list.
+ *
+ * @return 0  The allocation failed.
+ * @return 1  Allocation succeeded.  The tasks are allocated on the kernel
+ *            stack.
  */
-void allocate_tasks(task_t** tasks , size_t num_tasks)
+int allocate_tasks(task_t** tasks , size_t num_tasks)
 {
     // Initialize run queue
     runqueue_init();
@@ -67,9 +71,6 @@ void allocate_tasks(task_t** tasks , size_t num_tasks)
 
     dispatch_init(&system_tcb[IDLE_PRIO]);
 
-    // Erroneous amount of num task
-    if (num_tasks > OS_AVAIL_TASKS) return;
-
     size_t prio = 0;
     task_t *curTask;
     // Assumes that the task list is sorted by priority previously by ub test
@@ -80,7 +81,7 @@ void allocate_tasks(task_t** tasks , size_t num_tasks)
         if (!is_userSpace((uint32_t)curTask->lambda)  ||
             !is_userSpace((uint32_t)curTask->stack_pos)    ||
             !is_stackAligned((uint32_t)curTask->stack_pos)) {
-            return;
+            return 0;
         }
 
         // Initialize tcb for task
@@ -97,6 +98,6 @@ void allocate_tasks(task_t** tasks , size_t num_tasks)
         // Add task to run queue
         runqueue_add(&system_tcb[prio], (uint8_t)prio);
     }
-
+    return 1;
 }
 
