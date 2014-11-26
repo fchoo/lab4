@@ -34,9 +34,6 @@
 
 #define BAD_CODE        0x0badc0de
 
-extern unsigned long dev_offset;
-extern volatile unsigned long systime;
-
 /* Checks the SWI Vector Table. */
 bool_e check_vector(int vect_addr) {
     int vector_instr = *((int *)vect_addr);
@@ -108,8 +105,6 @@ int kmain(int argc, char** argv, uint32_t table)
 
     reg_set(INT_ICMR_ADDR, 1<<INT_OSTMR_0);
     reg_clear(INT_ICLR_ADDR, 1<<INT_OSTMR_0);
-
-    // TODO: Intialize timer and irq for dev
 
     /** Jump to user program. **/
     user_setup(spTop);
