@@ -120,22 +120,24 @@ tcb_t* runqueue_remove(uint8_t prio)
     // Requested when there is no task of that priority waiting
     else if (run_list[prio] == NULL) return NULL;
 
-    // Remove runnable task from run list.
     tcb_t *runnable = run_list[prio];
-
-    if (runnable->sleep_queue != NULL) {
-        // If runnable has more task after it, set it in priority run list
-        run_list[prio] = runnable->sleep_queue;
-        runnable->sleep_queue = NULL;
-    } else {
-        // Else, empty priority run list
-        run_list[prio] = NULL;
+    // Remove runnable task from run list if it is not idle
+    if (runnable->cur_prio != IDLE_PRIO) {
+        if (runnable->sleep_queue != NULL) {
+            // If runnable has more task after it, set it in priority run list
+            run_list[prio] = runnable->sleep_queue;
+            runnable->sleep_queue = NULL;
+        } else {
+            // Else, empty priority run list
+            run_list[prio] = NULL;
+        }
 
         // Clear priority group and position associated with that priority.
         uint8_t OSTCBY = prio >> 3;
         uint8_t OSTCBX = prio & 0x07;
         run_bits[OSTCBY] &= ~(1 << OSTCBX);
         if (run_bits[OSTCBY] == 0) group_run_bits &= ~(1 << OSTCBY);
+
     }
 
     return runnable;
