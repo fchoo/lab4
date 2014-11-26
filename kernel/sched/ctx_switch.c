@@ -45,9 +45,7 @@ void dispatch_init(tcb_t* idle)
  */
 void dispatch_save(void)
 {
-    printf("[INFO] Calling dispatch save\n");
-
-    printf("highest prio %d\n", highest_prio());
+    // printf("\t[INFO] Calling dispatch_save...\n");
     // get the tcb of task (63 is the idle task)
     tcb_t *next_tcb = runqueue_remove(highest_prio());
     // add curr tcb add back to runnables
@@ -57,7 +55,8 @@ void dispatch_save(void)
     tcb_t *old_tcb = cur_tcb;
     cur_tcb = next_tcb;
 
-    printf("[INFO] oldtcb %d newtch %d highest_prio %d\n", old_tcb->cur_prio , cur_tcb->cur_prio, highest_prio());
+    // printf("\t\t[INFO] Switch and execute task with prio(%d), lr(%x)\n",
+    //            cur_tcb->cur_prio, cur_tcb->context.lr);
     //context switch full
     ctx_switch_full(&(cur_tcb->context), &(old_tcb->context));
     // Renable interrupts
@@ -73,8 +72,12 @@ void dispatch_save(void)
  */
 void dispatch_nosave(void)
 {
+<<<<<<< HEAD
     printf("[INFO] Calling dispatch nosave\n");
     //get the tcb of task (63 is the idle task)
+=======
+    //get the tcb of task
+>>>>>>> 432c5c8498609222f6af1279877ef42dc395bc5e
     tcb_t* next_tcb = runqueue_remove(highest_prio());
     cur_tcb = next_tcb;
 
@@ -91,20 +94,32 @@ void dispatch_nosave(void)
  */
 void dispatch_sleep(void)
 {
+<<<<<<< HEAD
     printf("[INFO] Calling dispatch sleep\n");
     printf("highest prio %d\n", highest_prio());
+=======
+    // printf("\t[INFO] Calling dispatch_sleep...\n");
+>>>>>>> 432c5c8498609222f6af1279877ef42dc395bc5e
     //get the tcb of task (63 is the idle task)
     tcb_t* next_tcb = runqueue_remove(highest_prio());
 
     printf("[INFO] oldtcb %d newtch %d ", cur_tcb->cur_prio , next_tcb->cur_prio);
     printf("highest prio %d\n", highest_prio());
     // Update cur_tcb
+    tcb_t *old_tcb = cur_tcb;
     cur_tcb = next_tcb;
+<<<<<<< HEAD
 
 
     //context switch half since we are never returning from dispatch_sleep!
     ctx_switch_half(&(cur_tcb->context));
     printf("[INFO] Leaving dispatch sleep\n");
+=======
+    // printf("\t\t[INFO] Switch and execute task with prio(%d), lr(%x)\n",
+           // cur_tcb->cur_prio, cur_tcb->context.lr);
+    //context switch full
+    ctx_switch_full(&(cur_tcb->context), &(old_tcb->context));
+>>>>>>> 432c5c8498609222f6af1279877ef42dc395bc5e
 }
 
 /**

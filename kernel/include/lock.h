@@ -5,10 +5,9 @@
  * @author Kartik Subramanian <ksubrama@andrew.cmu.edu>
  * @date   2008-12-01
  *
- * @author Junsung Kim <junsungk@cmu.edu>
- *	   Veeren Mandalia <vmandali@andrew.cmu.edu>
- *	   Vikram Gupta <vikramg@andrew.cmu.edu>
- * @date   Sat, 06 Dec 2008 05:15:00 -0400
+ * Authors: Foo Lai Choo <fchoo@andrew.cmu.edu>
+ *          Hui Jun Tay <htay@andrew.cmu.edu>
+ * Date:    Tues, 22 Nov 2014 01:51:29 -0400
  */
 
 #include <types.h>
@@ -21,7 +20,7 @@ struct mutex
 {
 	bool_e	bAvailable;		/* flag for availability */
 	tcb_t*	pHolding_Tcb;	/* who are using this mutex */
-	bool_e	bLock;			/* 1 for lock/0 for unlock */	
+	bool_e	bLock;			/* 1 for lock/0 for unlock */
 	tcb_t*	pSleep_queue;	/* list of applications waiting for this mutex */
 };
 typedef struct mutex mutex_t;
