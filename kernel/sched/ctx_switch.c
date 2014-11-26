@@ -2,8 +2,9 @@
  *
  * @brief C wrappers around assembly context switch routines.
  *
- * @author Kartik Subramanian <ksubrama@andrew.cmu.edu>
- * @date 2008-11-21
+ * Authors: Foo Lai Choo <fchoo@andrew.cmu.edu>
+ *          Hui Jun Tay <htay@andrew.cmu.edu>
+ * Date:    Tues, 21 Nov 2014 01:51:29 -0400
  */
 
 
@@ -44,7 +45,6 @@ void dispatch_init(tcb_t* idle)
  */
 void dispatch_save(void)
 {
-	printf("\n[INFO] Calling dispatch_save\n");
     // get the tcb of task (63 is the idle task)
     tcb_t *next_tcb = runqueue_remove(highest_prio());
     // add curr tcb add back to runnables
@@ -56,7 +56,8 @@ void dispatch_save(void)
 
     //context switch full
     ctx_switch_full(&(cur_tcb->context), &(old_tcb->context));
-
+    // Renable interrupts
+    enable_interrupts();
 }
 
 /**
@@ -67,8 +68,6 @@ void dispatch_save(void)
  */
 void dispatch_nosave(void)
 {
-	printf("\n[INFO] Calling dispatch_nosave!\n");
-
     //get the tcb of task (63 is the idle task)
     tcb_t* next_tcb = runqueue_remove(highest_prio());
     cur_tcb = next_tcb;
@@ -85,8 +84,6 @@ void dispatch_nosave(void)
  */
 void dispatch_sleep(void)
 {
-	printf("\n[INFO] Calling dispatch_sleep!\n");
-
     //get the tcb of task (63 is the idle task)
     tcb_t* next_tcb = runqueue_remove(highest_prio());
 
@@ -94,20 +91,8 @@ void dispatch_sleep(void)
     tcb_t *old_tcb = cur_tcb;
     cur_tcb = next_tcb;
 
-    printf("\n[INFO] lr(%x) sp(%x) r4(%x) r5(%x) r6(%x) r7(%x) r8(%x) r9(%x) r10(%x)\n",
-           old_tcb->context.lr, old_tcb->context.sp, old_tcb->context.r4, old_tcb->context.r5,
-			old_tcb->context.r6, old_tcb->context.r7, old_tcb->context.r8, old_tcb->context.r9,
-			old_tcb->context.r10);
-
-    printf("\n[INFO] lr(%x) sp(%x) r4(%x) r5(%x) r6(%x) r7(%x) r8(%x) r9(%x) r10(%x)\n",
-           cur_tcb->context.lr, cur_tcb->context.sp, cur_tcb->context.r4, cur_tcb->context.r5,
-			cur_tcb->context.r6, cur_tcb->context.r7, cur_tcb->context.r8, cur_tcb->context.r9,
-			cur_tcb->context.r10);
-
-
-    //context switch full
-    ctx_switch_full(&(cur_tcb->context), &(old_tcb->context));
-
+    //context switch half since we are never returning from dispatch_sleep!
+    ctx_switch_half(&(cur_tcb->context));
 }
 
 /**

@@ -52,7 +52,7 @@ void dev_init(unsigned long millis)
         devices[i].sleep_queue = NULL;
         devices[i].next_match = millis + dev_freq[i];
     }
-    dev_offset = systime;
+    dev_offset = millis;
 }
 
 
