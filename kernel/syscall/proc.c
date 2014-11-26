@@ -35,7 +35,6 @@ int task_create(task_t* tasks, size_t num_tasks)
     disable_interrupts(); // Disable interrupt when modifying shared structs
     // UB Test
     if (!assign_schedule(sorted_tasks, num_tasks)) return -ESCHED;
-
     // Create tasks in kernel
     if (!allocate_tasks(sorted_tasks, num_tasks)) return -EFAULT;
 

@@ -41,6 +41,9 @@ typedef struct dev dev_t;
 const unsigned long dev_freq[NUM_DEVICES] = {100, 200, 500, 50};
 static dev_t devices[NUM_DEVICES];
 
+/**
+ * Print out device sleep queues for debug
+ */
 void print_devq()
 {
     int i;
@@ -80,7 +83,6 @@ void dev_init(unsigned long millis)
  */
 void dev_wait(unsigned int dev)
 {
-    // printf("\t[INFO] Calling dev_wait...\n");
     // Invalid device number
     if (dev >= NUM_DEVICES) return;
     // Append current tcb to the end of device sleep queue
@@ -106,26 +108,22 @@ void dev_wait(unsigned int dev)
  */
 void dev_update(unsigned long millis)
 {
-    // printf("\t[INFO] Calling dev_update...\n");
     int i;
     tcb_t *head;
     tcb_t *next;
     bool_e hasHigherPrio = FALSE;
 
     uint8_t curPrio = get_cur_prio();
-    print_devq();
     for (i=0; i<NUM_DEVICES; i++) {
         // if device is matched
         if (devices[i].next_match <= millis) {
             head = devices[i].sleep_queue;
             while (head != NULL) {
-                // printf("\t\tCalling dev_update on dev(%d)\n", i);
                 // Check if there is a higher priority task
                 if (head->cur_prio < curPrio) hasHigherPrio = TRUE;
                 // Add to run queue
                 next = head->sleep_queue;
                 runqueue_add(head, head->native_prio);
-                printf("\t\tAdding task %d\n", head->native_prio);
                 head = next;
             }
             // Clear sleep queue
@@ -138,6 +136,5 @@ void dev_update(unsigned long millis)
     if (hasHigherPrio) {
         dispatch_save();
     }
-    // printf("\t[INFO] Exiting dev_update...\n");
 }
 

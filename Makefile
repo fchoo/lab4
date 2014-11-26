@@ -14,7 +14,7 @@ MAKEFLAGS += -rR
 # Make sure there are no name clashes.  Add new ones here if you make your own
 # tests (which I recommend you do).
 
-PACKAGES = dagger splat twister typo alarm mutex_nounlock inversion ubtest_success dev_multask
+PACKAGES = dagger splat twister typo alarm mutex_nounlock inversion ubtest_success ubtest_fail dev_multask
 
 .PHONY: all package clean clobber $(PACKAGES)
 all: package kernel

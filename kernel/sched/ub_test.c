@@ -7,7 +7,7 @@
  * Date:    Tues, 22 Nov 2014 01:51:29 -0400
  */
 
-//#define DEBUG 0
+#define DEBUG 0
 
 #include <sched.h>
 #ifdef DEBUG
@@ -79,7 +79,6 @@ int assign_schedule(task_t** tasks, size_t num_tasks)
         // Check ub rate for every task
         if (curr_u >= ub_rate_table[i]) return 0;
     }
-    return 1;
 }
 
 
