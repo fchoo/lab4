@@ -34,7 +34,6 @@ void sleep_syscall(unsigned long millis)
     while(end > 0) {
       //decrease counter everytime systime changes by a unit
       if(systime > currtime) {
-	        printf("%ds ", end);
           end = end - 1;
           currtime = systime;
       }
