@@ -1,6 +1,6 @@
 /** @file dagger.c
  *
- * @brief Creates two simple periodic tasks.
+ * @brief Test for return code when task call event_wait while having lock
  *
  * @note  This is like knife -- but smaller :)
  *
@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <task.h>
 #include <unistd.h>
+#include <errno.h>
 
 const int PERIOD_LOCK1 = 10;
 const int PERIOD_LOCK2 = 3;
@@ -18,6 +19,7 @@ int mutex = 0;
 
 void panic(const char* str)
 {
+    printf("Errno: %d\n", errno);
 	puts(str);
 	while(1);
 }
