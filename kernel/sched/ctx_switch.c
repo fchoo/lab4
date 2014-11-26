@@ -88,7 +88,6 @@ void dispatch_sleep(void)
     tcb_t* next_tcb = runqueue_remove(highest_prio());
 
     // Update cur_tcb
-    tcb_t *old_tcb = cur_tcb;
     cur_tcb = next_tcb;
 
     //context switch half since we are never returning from dispatch_sleep!
