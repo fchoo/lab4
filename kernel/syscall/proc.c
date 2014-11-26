@@ -39,7 +39,7 @@ int task_create(task_t* tasks, size_t num_tasks)
     // Create tasks in kernel
     if (!allocate_tasks(sorted_tasks, num_tasks)) return -EFAULT;
 
-    // Start device interrupt timer
+    // Update device match time
     dev_init(systime);
     // Start the highest priority task
     dispatch_nosave();
