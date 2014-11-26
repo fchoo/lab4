@@ -68,6 +68,8 @@ int assign_schedule(task_t** tasks, size_t num_tasks)
     // Perform UB test
     for (i = 0; i < num_tasks; i++) {
         double curr_u = 0.0;
+        // Check for division by zero error
+        if (task[i]->T == 0) return 0;
         // Sum all utilizations up till current task
         for (j = 0; j <= i; j++) {
             curr_u += (tasks[j]->C / tasks[j]->T);

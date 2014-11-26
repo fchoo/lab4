@@ -13,6 +13,7 @@
 #include <kernel.h>
 #include <syscall.h>
 #include <sched.h>
+#include <globals.h>
 
 #include <arm/reg.h>
 #include <arm/psr.h>
@@ -36,13 +37,13 @@ int task_create(task_t* tasks, size_t num_tasks)
     if (!assign_schedule(sorted_tasks, num_tasks)) return -ESCHED;
 
     // Create tasks in kernel
-    allocate_tasks(sorted_tasks, num_tasks);
+    if (!allocate_tasks(sorted_tasks, num_tasks)) return -EFAULT;
 
-    // TODO: Start device interrupt timer
-    dev_init(time_syscall());
+    // Start device interrupt timer
+    dev_init(systime);
     // Start the highest priority task
     dispatch_nosave();
-    // Re-enable interrupts at the end
+    // Renable interrupts
     enable_interrupts();
     return 0;
 }
@@ -63,13 +64,13 @@ int event_wait(unsigned int dev)
     dev_wait(dev);
     // Switch to next highest priority task
     dispatch_sleep();
-    // Re-enable interrupt at the end
+    // Renable interrupts
     enable_interrupts();
     return 0;
 }
 
 /* An invalid syscall causes the kernel to exit. */
-void invalid_syscall(unsigned int call_num  __attribute__((unused)))
+void invalid_syscall(unsigned int call_num)
 {
 	printf("Kernel panic: invalid syscall -- 0x%08x\n", call_num);
 
