@@ -34,9 +34,6 @@ void C_IRQ_Handler() {
         // Update system time
         systime++;
     }
-
-    if ((systime - dev_offset) % DEV_INTERVAL == 0) {
         dev_update(systime * TIMER_INTERVAL);
-    }
 
 }
