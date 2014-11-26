@@ -84,7 +84,8 @@ void runqueue_add(tcb_t* tcb, uint8_t prio)
 {
     // Error prio input
     if (prio > OS_MAX_TASKS - 1) return;
-
+    // Remove tcb tail
+    tcb->sleep_queue = NULL;
     // Add task to run list. Append to end of priority run list if queue exist.
     if (run_list[prio] != NULL) {
         // Find the end of list
