@@ -16,7 +16,7 @@
 extern int forty;
 extern int three;
 
-int main(int argc, char** argv)
+int main(int argc __attribute((unused)), char** argv __attribute((unused)))
 {
 	const char hello[] = "Hello";
 	const char goodbye[] = "Goodbye";
