@@ -16,15 +16,18 @@
 #include <bits/errno.h>
 #include <arm/psr.h>
 #include <arm/exception.h>
-#ifdef DEBUG_MUTEX
+// #ifdef DEBUG_MUTEX
 #include <exports.h> // temp
-#endif
+// #endif
 
 mutex_t gtMutex[OS_NUM_MUTEX];
+bool_e isInit;
 
 void mutex_init()
 {
+	if (isInit) return; // has already been initialized.
 	int i;
+    printf("[INFO] Initialize lock\n");
 	for (i=0; i<OS_NUM_MUTEX; i++) {
 		gtMutex[i].bAvailable = TRUE;
 		gtMutex[i].pHolding_Tcb = NULL;
@@ -35,7 +38,9 @@ void mutex_init()
 
 int mutex_create(void)
 {
+	if (isInit == FALSE) mutex_init();
 	int i;
+    printf("[INFO] Searching for lock\n");
 	for (i=0; i<OS_NUM_MUTEX; i++) {
 		// Skip if mutex has been allocated
 		if (gtMutex[i].bAvailable == FALSE) continue;
@@ -47,7 +52,7 @@ int mutex_create(void)
 	return -ENOMEM;
 }
 
-int mutex_lock(int mutex  __attribute__((unused)))
+int mutex_lock(int mutex)
 {
 	//if mutex index is not in array range or mutex not
 	//available return EINVAL
@@ -99,12 +104,13 @@ int mutex_lock(int mutex  __attribute__((unused)))
 		curr_tcb->holds_lock = 1;
 		//set mutex bLock to 1
 		mtx.bLock = TRUE;
+	    printf("[INFO] Acquired lock\n");
 	}
 
 	return 0; // return on success
 }
 
-int mutex_unlock(int mutex  __attribute__((unused)))
+int mutex_unlock(int mutex)
 {
         //if mutex index is not in array range return EINVAL
         if(mutex < 0 || mutex >= 32 || gtMutex[mutex].bAvailable) {

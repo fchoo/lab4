@@ -95,7 +95,7 @@ int kmain(int argc, char** argv, uint32_t table)
     }
     *spTop = argc;
 
-    //initialize systime to 0
+    // Initialize systime to 0
     systime = 0;
 
     // initialize and mask OS Timer register bits
