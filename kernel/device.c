@@ -100,6 +100,7 @@ void dev_update(unsigned long millis)
         if (devices[i].next_match <= millis) {
             head = devices[i].sleep_queue;
             while (head != NULL) {
+                // printf("\t[INFO] Calling dev_update on dev(%d)\n", i);
                 // Check if there is a higher priority task
                 if (head->cur_prio < curPrio) hasHigherPrio = TRUE;
                 // Add to run queue
@@ -113,7 +114,9 @@ void dev_update(unsigned long millis)
         }
     }
     // Context switch to higher priority
-    if (hasHigherPrio) dispatch_save();
+    if (hasHigherPrio) {
+        dispatch_save();
+    }
 
 }
 

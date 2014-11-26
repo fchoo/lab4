@@ -13,40 +13,35 @@
 
     .global swi_handler
 swi_handler:
-    sub     sp, sp, #4
-    stmfd   sp!, {r0-r12, lr}
+    stmfd   sp!, {lr}                    @ Push swi_irq
+    stmfd   sp!, {r0-r3, r8, ip, lr}     @ Save caller saved regs.
 
-    @ get spsr into general purpose (gp) registers
-    mrs     r2, spsr
+    @ Save spsr. Saving user registers to emulate irq_handler.
+    mrs     r0, spsr
+    stmfd   sp, {r0, sp, lr}^
+    sub     sp, sp, #12
 
-    @ store spsr above gp registers
-    str     r2, [sp, #14*4]
+    @ Restore U-Boot export table.
+    ldr     ip, =global_data
+    ldr     r8, [ip]
 
-    @mask the cpsr so irqs are enabled
+    @ Enable interrupts.
     msr     cpsr_c, #(PSR_MODE_SVC | PSR_FIQ)
 
-    @ Restore jmp table in r8
-    ldr ip, =global_data
-    ldr r8, [ip]
-
-    @ Set Param 1: extract SWI and get SWI no. by bit-masking
-    ldr     r0, [lr, #-4]
+    @ Call our C SWI handler
+    ldr     r0, [lr, #-4]       @ Pass in swi number
     bic     r0, r0, #0xff000000
 
-    @ Set Param 2: pointer to parameters on stack
-    mov     r1, sp
+    add     r1, sp, #12         @ Pass in saved register array
+                                @ Offset due to irq_handler emulation.
+    bl      C_SWI_Handler       @ Jump to our C SWI handler.
 
-    @ go to handler
-    bl      C_SWI_Handler
+    @ Restore spsr. Restoring user sp & lr due to launch_task clobber the
+    @ user stack
+    ldmfd   sp, {ip, sp, lr}^
+    add     sp, sp, #12
+    msr     spsr, ip
 
-    @ restore spsr
-    ldr     r2, [sp, #14*4]
-    msr     spsr, r2
-
-    @ Discard the r0 on the stack (r0 has ret value).
-    add     sp, sp, #4
-    ldmfd   sp!, {r1-r12, lr}
-
-    @ remove space used to store spsr
-    add     sp, sp, #4
-    movs    pc, lr
+    @ Restore old registers and return.
+    add     sp, sp, #4                      @ Bypass r0 in the stack.
+    ldmfd   sp!, {r1-r3, r8, ip, lr, pc}^

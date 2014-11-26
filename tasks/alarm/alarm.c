@@ -2,7 +2,7 @@
  *
  * @brief Creates three periodic tasks that interrupt each other
  *
- * @note  
+ * @note
  *
  * @author Hui Jun Tay, Foo Lai Choo (htay, fchoo)
  * @date   2014-11-25
@@ -34,7 +34,7 @@ void minute(void* str)
 	{
 		putchar((int)str);
 		if (event_wait(0) < 0)
-			panic("(min) dev 1 failed");
+			panic("(min) dev 0 failed");
 	}
 }
 
@@ -44,8 +44,8 @@ void ring(void* str)
 	{
 		sleep(400);
 		putchar((int)str);
-		if (event_wait(2) < 0)
-			panic("(ring) dev 2 failed");
+		if (event_wait(1) < 0)
+			panic("(ring) dev 1 failed");
 	}
 }
 

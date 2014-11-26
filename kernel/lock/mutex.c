@@ -3,10 +3,9 @@
  *
  * @brief Implements mutices.
  *
- * @author Harry Q Bovik < PUT YOUR NAMES HERE
- *
- * 
- * @date  
+ * Authors: Foo Lai Choo <fchoo@andrew.cmu.edu>
+ *          Hui Jun Tay <htay@andrew.cmu.edu>
+ * Date:    Tues, 22 Nov 2014 01:51:29 -0400
  */
 
 //#define DEBUG_MUTEX
@@ -25,7 +24,7 @@ mutex_t gtMutex[OS_NUM_MUTEX];
 
 void mutex_init()
 {
-	
+
 }
 
 int mutex_create(void)
@@ -44,7 +43,7 @@ int mutex_lock(int mutex  __attribute__((unused)))
 	//available return EINVAL
 
 	//if mutex is held by the curr task, return EDEADLOCK
-	
+
 	//check if mutex is being held by another task
 	//if it is, check that task is of a lower priority
 	//if task holding mutex is of lower priority
@@ -56,13 +55,13 @@ int mutex_lock(int mutex  __attribute__((unused)))
 	//set tcb has lock to 1
 	//set mutex bLock to 1
 	//change holder of mutex to curr_tcb
-	
+
 	return 0; // return on success
 }
 
 int mutex_unlock(int mutex  __attribute__((unused)))
 {
-	
+
 	//if mutex index is not in array range return EINVAL
 
 	//if mutex is not held by the curr task, return EPERM

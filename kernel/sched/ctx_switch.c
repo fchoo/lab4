@@ -45,6 +45,7 @@ void dispatch_init(tcb_t* idle)
  */
 void dispatch_save(void)
 {
+    // printf("\t[INFO] Calling dispatch_save...\n");
     // get the tcb of task (63 is the idle task)
     tcb_t *next_tcb = runqueue_remove(highest_prio());
     // add curr tcb add back to runnables
@@ -53,7 +54,8 @@ void dispatch_save(void)
     // Update cur_tcb
     tcb_t *old_tcb = cur_tcb;
     cur_tcb = next_tcb;
-
+    // printf("\t\t[INFO] Switch and execute task with prio(%d), lr(%x)\n",
+    //            cur_tcb->cur_prio, cur_tcb->context.lr);
     //context switch full
     ctx_switch_full(&(cur_tcb->context), &(old_tcb->context));
     // Renable interrupts
@@ -68,7 +70,7 @@ void dispatch_save(void)
  */
 void dispatch_nosave(void)
 {
-    //get the tcb of task (63 is the idle task)
+    //get the tcb of task
     tcb_t* next_tcb = runqueue_remove(highest_prio());
     cur_tcb = next_tcb;
 
@@ -84,14 +86,17 @@ void dispatch_nosave(void)
  */
 void dispatch_sleep(void)
 {
+    // printf("\t[INFO] Calling dispatch_sleep...\n");
     //get the tcb of task (63 is the idle task)
     tcb_t* next_tcb = runqueue_remove(highest_prio());
 
     // Update cur_tcb
+    tcb_t *old_tcb = cur_tcb;
     cur_tcb = next_tcb;
-
-    //context switch half since we are never returning from dispatch_sleep!
-    ctx_switch_half(&(cur_tcb->context));
+    // printf("\t\t[INFO] Switch and execute task with prio(%d), lr(%x)\n",
+           // cur_tcb->cur_prio, cur_tcb->context.lr);
+    //context switch full
+    ctx_switch_full(&(cur_tcb->context), &(old_tcb->context));
 }
 
 /**
