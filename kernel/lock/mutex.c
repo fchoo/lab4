@@ -24,17 +24,27 @@ mutex_t gtMutex[OS_NUM_MUTEX];
 
 void mutex_init()
 {
-
+	int i;
+	for (i=0; i<OS_NUM_MUTEX; i++) {
+		gtMutex[i].bAvailable = TRUE;
+		gtMutex[i].pHolding_Tcb = NULL;
+		gtMutex[i].bLock = FALSE;
+		gtMutex[i].pSleep_queue = NULL;
+	}
 }
 
 int mutex_create(void)
 {
-
-	//iterate over the mutex array for an unused mutex (flag avail)
-	//set mutex available to 0
-	//return the index of this mutex
-	//if max array size reached, return ENOMEM
-	return 1; // fix this to return the correct value
+	int i;
+	for (i=0; i<OS_NUM_MUTEX; i++) {
+		// Skip if mutex has been allocated
+		if (gtMutex[i].bAvailable == FALSE) continue;
+		// Else de-avail mutex and return index
+		gtMutex[i].bAvailable = FALSE;
+		return i;
+	}
+	// Did not manage to find an available mutex
+	return -ENOMEM;
 }
 
 int mutex_lock(int mutex  __attribute__((unused)))

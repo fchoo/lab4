@@ -13,6 +13,7 @@
 #include <kernel.h>
 #include <config.h>
 #include "sched_i.h"
+#include <lock.h>
 
 #include <arm/reg.h>
 #include <arm/psr.h>
@@ -54,8 +55,9 @@ static void idle(void)
  */
 int allocate_tasks(task_t** tasks , size_t num_tasks)
 {
-    // Initialize run queue
+    // Initialize shared structures
     runqueue_init();
+    mutex_init();
 
     // Initialize idle tcb
     system_tcb[IDLE_PRIO].native_prio = IDLE_PRIO;
