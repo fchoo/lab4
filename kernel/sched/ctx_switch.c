@@ -61,7 +61,6 @@ void dispatch_save(void)
     ctx_switch_full(&(cur_tcb->context), &(old_tcb->context));
     // Renable interrupts
     //enable_interrupts();
-    printf("[INFO] Leaving dispatch save\n");
 }
 
 /**
@@ -119,4 +118,9 @@ uint8_t get_cur_prio(void)
 tcb_t* get_cur_tcb(void)
 {
 	return cur_tcb;
+}
+
+void set_cur_tcb(tcb_t* tcb)
+{
+	cur_tcb = tcb;
 }
