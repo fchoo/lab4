@@ -41,20 +41,54 @@ int mutex_lock(int mutex  __attribute__((unused)))
 {
 	//if mutex index is not in array range or mutex not
 	//available return EINVAL
+	if(mutex < 0 || mutex >= 32 || gtMutex[mutex].bAvailable) {
+		return EINVAL;
+	}
 
+	mutex_t mtx = gtMutex[mutex];
+	tcb_t* curr_tcb = get_cur_tcb();
 	//if mutex is held by the curr task, return EDEADLOCK
+	if(mtx.pHolding_Tcb == curr_tcb) {
+		return EDEADLOCK;
+	}
 
 	//check if mutex is being held by another task
-	//if it is, check that task is of a lower priority
-	//if task holding mutex is of lower priority
-	//elevate said task to current task's priority
-	//move current task to mutex sleep queue
-	//call dispatch save
+	if(mtx.bLock == TRUE) {
+		//if it is, check that task is of a lower priority
+		tcb_t* hold_tcb = mtx.pHolding_Tcb;
 
-	//otherwise, give lock to current task
-	//set tcb has lock to 1
-	//set mutex bLock to 1
-	//change holder of mutex to curr_tcb
+		//if task holding mutex is of lower priority
+		if(hold_tcb->cur_prio < curr_tcb->cur_prio) {
+			//elevate holding task to cur_task prio
+			hold_tcb->cur_prio = curr_tcb->cur_prio;
+
+			//move current task to mutex sleep queue
+			tcb_t* head = mtx.pSleep_queue;
+			if(head == NULL) {
+				mtx.pSleep_queue = curr_tcb;
+			}
+			else {
+				while(head->sleep_queue != NULL) {
+					head = head->sleep_queue;
+				}
+				head->sleep_queue = curr_tcb;
+			}
+
+			//call dispatch save
+			dispatch_save();
+		}
+		else {
+			//should never get here
+		}
+	}
+	else {
+		//otherwise, give lock to current task
+		mtx.pHolding_Tcb = curr_tcb;
+		//set tcb has lock to 1
+		curr_tcb->holds_lock = 1;
+		//set mutex bLock to 1
+		mtx.bLock = TRUE;
+	}
 
 	return 0; // return on success
 }
