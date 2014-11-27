@@ -18,6 +18,8 @@ void sched_init(task_t* main_task);
 void dispatch_save(void);
 void dispatch_nosave(void);
 void dispatch_sleep(void);
+void dispatch_mlock(tcb_t* target_tcb);
+void dispatch_munlock(tcb_t* target_tcb);
 
 /* Entry assist */
 void launch_task(void); /* takes lambda and argument in r4, r5 */
@@ -29,7 +31,6 @@ int assign_schedule(task_t** tasks, size_t num_tasks);
 /* Current task state */
 uint8_t get_cur_prio(void);
 tcb_t* get_cur_tcb(void);
-void set_cur_tcb(tcb_t*);
 
 /* Run-queue/priority management */
 void runqueue_add(tcb_t* tcb, uint8_t prio);

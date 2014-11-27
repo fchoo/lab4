@@ -104,6 +104,36 @@ void dispatch_sleep(void)
     ctx_switch_full(&(cur_tcb->context), &(old_tcb->context));
 }
 
+void dispatch_mlock(tcb_t* target_tcb)
+{
+    //remove curr task from run queue       
+    runqueue_remove(get_cur_prio());
+    
+    //remove target task from run queue       
+    runqueue_remove(target_tcb->native_prio);
+
+    //set curr task to holding task
+    tcb_t *old_tcb = cur_tcb;
+    cur_tcb = target_tcb;
+
+    //get context of lock-holding task and curr task
+    //context switch full
+    ctx_switch_full(&(cur_tcb->context), &(old_tcb->context));
+}
+
+void dispatch_munlock(tcb_t* target_tcb)
+{
+    //add curr task to run queue       
+    runqueue_add(cur_tcb, get_cur_prio());
+    
+    //set curr task to target task
+    tcb_t *old_tcb = cur_tcb;
+    cur_tcb = target_tcb;
+
+    //get context of lock-holding task and curr task
+    //context switch full
+    ctx_switch_full(&(cur_tcb->context), &(old_tcb->context));
+}
 /**
  * @brief Returns the priority value of the current task.
  */
@@ -120,7 +150,3 @@ tcb_t* get_cur_tcb(void)
 	return cur_tcb;
 }
 
-void set_cur_tcb(tcb_t* tcb)
-{
-	cur_tcb = tcb;
-}
