@@ -64,7 +64,7 @@ int mutex_lock(int mutex  __attribute__((unused)))
 
 	//check if mutex is being held by another task
 	if(mtx.bLock == TRUE) {
-		//if it is, check that task is of a lower priority
+		//if it is, check that tk is of a lower priority
 		tcb_t* hold_tcb = mtx.pHolding_Tcb;
 
 		//if task holding mutex is of lower priority
@@ -84,8 +84,9 @@ int mutex_lock(int mutex  __attribute__((unused)))
 				head->sleep_queue = curr_tcb;
 			}
 
-			//call dispatch save
-			dispatch_save();
+			//dispatch_mlock
+			dispatch_mlock(hold_tcb);
+
 		}
 		else {
 			//should never get here
@@ -105,21 +106,54 @@ int mutex_lock(int mutex  __attribute__((unused)))
 
 int mutex_unlock(int mutex  __attribute__((unused)))
 {
+        //if mutex index is not in array range return EINVAL
+        if(mutex < 0 || mutex >= 32 || gtMutex[mutex].bAvailable) {
+                return EINVAL;
+        }
 
-	//if mutex index is not in array range return EINVAL
-
-	//if mutex is not held by the curr task, return EPERM
+        mutex_t mtx = gtMutex[mutex];
+        //if mutex is not held by the curr task, return EPERM
+        tcb_t* curr_tcb = get_cur_tcb();
+        if(mtx.pHolding_Tcb != curr_tcb) {
+                return EPERM;
+        }
 
 	//check if mutex sleep queue head is not NULL
-	//if not null, set curr task priority to original priority
-	//set curr_tcb hasLock to 0
-	//change holder of mutex to target task
-	//move waiting task from sleep queue to run queue (remember to set to null)
-	//call dispatch save
+	if(mtx.pSleep_queue != NULL) {
+		//if not null, set curr task priority to original priority
+		curr_tcb->cur_prio = curr_tcb->native_prio;
 
-	//otherwise, set holder of mutex to null
-	//set mutex bLock to 0
-	//set curr_tcb hasLock to 0
+		//set curr_tcb hasLock to 0
+		curr_tcb->holds_lock = 0;
+
+		//move waiting task from sleep queue to run queue (remember to set to null)
+		tcb_t* target_tcb = mtx.pSleep_queue;
+		if(target_tcb->sleep_queue == NULL) {
+			mtx.pSleep_queue = NULL;
+		}
+		else {
+			tcb_t* old_tcb = target_tcb;
+			while(target_tcb->sleep_queue != NULL) {
+				old_tcb = target_tcb;
+				target_tcb = target_tcb->sleep_queue;
+			}
+			old_tcb->sleep_queue = NULL;
+		}
+
+		//change holder of mutex to target task
+		mtx.pHolding_Tcb = target_tcb;
+
+		//call dispatch munlock
+		dispatch_munlock(target_tcb);
+	}
+	else {
+		//otherwise, set holder of mutex to null
+		mtx.pHolding_Tcb = NULL;
+		//set mutex bLock to 0
+		mtx.bLock = 0;
+		//set curr_tcb hasLock to 0
+		curr_tcb->holds_lock = 0;
+	}
 
 	return 1; // fix this to return the correct value
 }
