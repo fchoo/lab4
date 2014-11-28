@@ -27,7 +27,7 @@ void mutex_init()
 {
 	if (isInit) return; // has already been initialized.
 	int i;
-    printf("[INFO] Initialize lock\n");
+    	//printf("[INFO] Initialize lock\n");
 	for (i=0; i<OS_NUM_MUTEX; i++) {
 		gtMutex[i].bAvailable = TRUE;
 		gtMutex[i].pHolding_Tcb = NULL;
@@ -40,7 +40,7 @@ int mutex_create(void)
 {
 	if (isInit == FALSE) mutex_init();
 	int i;
-    printf("[INFO] Searching for lock\n");
+    	//printf("[INFO] Searching for lock\n");
 	for (i=0; i<OS_NUM_MUTEX; i++) {
 		// Skip if mutex has been allocated
 		if (gtMutex[i].bAvailable == FALSE) continue;
@@ -54,33 +54,35 @@ int mutex_create(void)
 
 int mutex_lock(int mutex)
 {
+	//printf("[INFO] Calling mutex_lock on mutex %d\n", mutex);
 	//if mutex index is not in array range or mutex not
 	//available return EINVAL
 	if(mutex < 0 || mutex >= 32 || gtMutex[mutex].bAvailable) {
 		return EINVAL;
 	}
 
-	mutex_t mtx = gtMutex[mutex];
-	tcb_t* curr_tcb = get_cur_tcb();
+	mutex_t* mtx = &gtMutex[mutex];
+	volatile tcb_t* curr_tcb = get_cur_tcb();
 	//if mutex is held by the curr task, return EDEADLOCK
-	if(mtx.pHolding_Tcb == curr_tcb) {
+	if(mtx->pHolding_Tcb == curr_tcb) {
 		return EDEADLOCK;
 	}
 
 	//check if mutex is being held by another task
-	if(mtx.bLock == TRUE) {
+	if(mtx->bLock == TRUE) {
+	//printf("[INFO] mutex_lock %d is locked\n", mutex);
 		//if it is, check that tk is of a lower priority
-		tcb_t* hold_tcb = mtx.pHolding_Tcb;
+		tcb_t* hold_tcb = mtx->pHolding_Tcb;
 
 		//if task holding mutex is of lower priority
-		if(hold_tcb->cur_prio < curr_tcb->cur_prio) {
+		if(hold_tcb->cur_prio > curr_tcb->cur_prio) {
 			//elevate holding task to cur_task prio
 			hold_tcb->cur_prio = curr_tcb->cur_prio;
 
 			//move current task to mutex sleep queue
-			tcb_t* head = mtx.pSleep_queue;
+			tcb_t* head = mtx->pSleep_queue;
 			if(head == NULL) {
-				mtx.pSleep_queue = curr_tcb;
+				mtx->pSleep_queue = curr_tcb;
 			}
 			else {
 				while(head->sleep_queue != NULL) {
@@ -89,22 +91,25 @@ int mutex_lock(int mutex)
 				head->sleep_queue = curr_tcb;
 			}
 
+	    		//printf("[INFO] Priority inversion! Switching...\n");
 			//dispatch_mlock
 			dispatch_mlock(hold_tcb);
 
 		}
 		else {
 			//should never get here
+	    		//printf("[ERROR] Lock-holding tcb has higher prio than curr task\n");
+	    		//printf("        Lock-holding tcb: %x curr tcb %x\n", hold_tcb->cur_prio, curr_tcb->cur_prio);
 		}
 	}
 	else {
 		//otherwise, give lock to current task
-		mtx.pHolding_Tcb = curr_tcb;
+		mtx->pHolding_Tcb = curr_tcb;
 		//set tcb has lock to 1
 		curr_tcb->holds_lock = 1;
 		//set mutex bLock to 1
-		mtx.bLock = TRUE;
-	    printf("[INFO] Acquired lock\n");
+		mtx->bLock = TRUE;
+	    	//printf("[INFO] Acquired lock for mtx(%d) %x, tcb: %x, pHOlding_tcb: %x\n", mutex, mtx, curr_tcb, mtx->pHolding_Tcb);
 	}
 
 	return 0; // return on success
@@ -112,20 +117,22 @@ int mutex_lock(int mutex)
 
 int mutex_unlock(int mutex)
 {
+	//printf("[INFO] Calling mutex_unlock on mutex %d\n", mutex);
         //if mutex index is not in array range return EINVAL
         if(mutex < 0 || mutex >= 32 || gtMutex[mutex].bAvailable) {
                 return EINVAL;
         }
 
-        mutex_t mtx = gtMutex[mutex];
+        mutex_t* mtx = &gtMutex[mutex];
         //if mutex is not held by the curr task, return EPERM
         tcb_t* curr_tcb = get_cur_tcb();
-        if(mtx.pHolding_Tcb != curr_tcb) {
+        if(mtx->pHolding_Tcb != curr_tcb) {
+	    	//printf("[INFO] Flagging EPERM, mtx %x, pH_tcb %x, cur_tcb %x\n", mtx, mtx->pHolding_Tcb, curr_tcb);
                 return EPERM;
         }
 
 	//check if mutex sleep queue head is not NULL
-	if(mtx.pSleep_queue != NULL) {
+	if(mtx->pSleep_queue != NULL) {
 		//if not null, set curr task priority to original priority
 		curr_tcb->cur_prio = curr_tcb->native_prio;
 
@@ -133,9 +140,9 @@ int mutex_unlock(int mutex)
 		curr_tcb->holds_lock = 0;
 
 		//move waiting task from sleep queue to run queue (remember to set to null)
-		tcb_t* target_tcb = mtx.pSleep_queue;
+		tcb_t* target_tcb = mtx->pSleep_queue;
 		if(target_tcb->sleep_queue == NULL) {
-			mtx.pSleep_queue = NULL;
+			mtx->pSleep_queue = NULL;
 		}
 		else {
 			tcb_t* old_tcb = target_tcb;
@@ -146,21 +153,23 @@ int mutex_unlock(int mutex)
 			old_tcb->sleep_queue = NULL;
 		}
 
+	    	//printf("[INFO] Inversion complete, restoring...\n");
 		//change holder of mutex to target task
-		mtx.pHolding_Tcb = target_tcb;
+		mtx->pHolding_Tcb = target_tcb;
 
 		//call dispatch munlock
 		dispatch_munlock(target_tcb);
 	}
 	else {
 		//otherwise, set holder of mutex to null
-		mtx.pHolding_Tcb = NULL;
+		mtx->pHolding_Tcb = NULL;
 		//set mutex bLock to 0
-		mtx.bLock = 0;
+		mtx->bLock = 0;
 		//set curr_tcb hasLock to 0
 		curr_tcb->holds_lock = 0;
+	    	//printf("[INFO] Released lock\n");
 	}
 
-	return 1; // fix this to return the correct value
+	return 0; // fix this to return the correct value
 }
 
