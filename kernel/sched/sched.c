@@ -67,7 +67,7 @@ int allocate_tasks(task_t** tasks , size_t num_tasks)
     system_tcb[IDLE_PRIO].context.sp = system_tcb[IDLE_PRIO].kstack_high;
     system_tcb[IDLE_PRIO].context.lr = 0;
 
-    dispatch_init(&system_tcb[IDLE_PRIO]);
+    dispatch_init(&system_tcb[IDLE_PRIO]); // Add idle to runqueue
 
     size_t prio = 0;
     task_t *curTask;
