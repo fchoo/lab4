@@ -79,6 +79,7 @@ int assign_schedule(task_t** tasks, size_t num_tasks)
         // Check ub rate for every task
         if (curr_u >= ub_rate_table[i]) return 0;
     }
+    return 1;
 }
 
 
