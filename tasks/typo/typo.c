@@ -10,7 +10,7 @@
 
 //times how long it takes for user to input and
 //respond after a prompt
-int main(int argc, char** argv)
+int main(int argc __attribute((unused)), char** argv __attribute((unused)))
 {
 
 	char buf[1024]; //arbitary buffer size
