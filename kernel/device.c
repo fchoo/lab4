@@ -113,7 +113,7 @@ void dev_update(unsigned long millis)
     bool_e hasHigherPrio = FALSE;
 
     uint8_t curPrio = get_cur_prio();
-    print_devq();
+    //print_devq();
     for (i=0; i<NUM_DEVICES; i++) {
         // if device is matched
         if (devices[i].next_match <= millis) {
