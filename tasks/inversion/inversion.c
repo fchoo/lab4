@@ -18,14 +18,18 @@ void panic(const char* str)
 	while(1);
 }
 
+//should print <#*@#>, since <* is in the lock statement
+
 void fun1(void* str) {
 	while (1) {
+		putchar((int)'#');
         	mutex_lock(mutex);
-		sleep(25);
+		sleep(10);
 
 		putchar((int)str);
 
 	        mutex_unlock(mutex);
+		putchar((int)'#');
 
 		if (event_wait(0) < 0) panic("Dev 0 failed");
 	}
@@ -34,14 +38,20 @@ void fun1(void* str) {
 void fun2(void* str) {
 	while(1) {
 
+
         	mutex_lock(mutex);
+		putchar((int)str);
 		sleep(100);
 
-		putchar((int)str);
+
+		putchar((int)'*');
 
 	        mutex_unlock(mutex);
+		sleep(50);
 
-		if (event_wait(1) < 0) panic("Dev 1 failed");
+
+		putchar((int)'>');
+		if (event_wait(2) < 0) panic("Dev 1 failed");
 	}
 }
 
@@ -58,9 +68,9 @@ int main(int argc __attribute((unused)),
 	tasks[1].lambda = fun2;
 	tasks[1].data = (void*)'<';
 	tasks[1].stack_pos = (void*)0xa1000000;
-	tasks[1].C = 100;
-    	tasks[1].B = 50;
-	tasks[1].T = PERIOD_DEV1;
+	tasks[1].C = 150;
+    	tasks[1].B = 100;
+	tasks[1].T = PERIOD_DEV2;
 
     mutex = mutex_create();
 

@@ -14,7 +14,7 @@ MAKEFLAGS += -rR
 # Make sure there are no name clashes.  Add new ones here if you make your own
 # tests (which I recommend you do).
 
-PACKAGES = dagger splat twister typo alarm mutex_nounlock
+PACKAGES = dagger splat twister typo alarm mutex_nounlock inversion
 
 .PHONY: all package clean clobber $(PACKAGES)
 all: package kernel
