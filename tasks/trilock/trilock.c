@@ -18,18 +18,20 @@ void panic(const char* str)
 	while(1);
 }
 
-//should print <#*@#>, since <* is in the lock statement
 
 void fun1(void* str) {
 	while (1) {
-		putchar((int)'#');
+		printf("0 Start\n");
+		printf("0 Get Lock\n");
         	mutex_lock(mutex);
+		printf("0 Lock\n");
 
 		putchar((int)str);
-
+		printf("\n0 Unlock\n");
 	        mutex_unlock(mutex);
-		putchar((int)'#');
 
+		printf("0 Unlocked\n");
+		printf("0 End\n");
 		if (event_wait(3) < 0) panic("Dev 3 failed");
 	}
 }
@@ -37,20 +39,20 @@ void fun1(void* str) {
 void fun2(void* str) {
 	while(1) {
 
-
-		putchar((int)'<');
+		printf("2 Start\n");
+		printf("2 Get Lock\n");
         	mutex_lock(mutex);
+		printf("2 Lock\n");
 
 		sleep(75);
-
-
 		putchar((int)str);
-
+		printf("\n2 Unlock\n");
 	        mutex_unlock(mutex);
-
+		printf("2 Unlocked\n");
 
 		sleep(25);
-		putchar((int)'>');
+		printf("2 End\n");
+
 		if (event_wait(2) < 0) panic("Dev 2 failed");
 	}
 }
@@ -58,13 +60,19 @@ void fun2(void* str) {
 void fun3(void* str) {
 	while(1) {
 
-		putchar((int)'(');
+		printf("1 Start\n");
+		printf("1 Get Lock\n");
         	mutex_lock(mutex);
+		printf("1 Lock\n");
+
 		sleep(75);
 		putchar((int)str);
+		printf("\n1 Unlock\n");
+	        mutex_unlock(mutex);
+		printf("1 Unlocked\n");
 
-        	mutex_unlock(mutex);
-		putchar((int)')');
+		printf("1 End\n");
+
 		if (event_wait(0) < 0) panic("Dev 0 failed");
 	}
 }
