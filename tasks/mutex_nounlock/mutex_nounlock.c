@@ -1,8 +1,6 @@
-/** @file dagger.c
+/** @file mutex_nounlock.c
  *
  * @brief Test for return code when task call event_wait while having lock
- *
- * @note  This is like knife -- but smaller :)
  *
  * @author Hui Jun Tay, Foo Lai Choo (htay, fchoo)
  * @date   2014-11-25
