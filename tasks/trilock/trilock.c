@@ -84,19 +84,19 @@ int main(int argc __attribute((unused)),
 	tasks[0].data = (void*)'0';
 	tasks[0].stack_pos = (void*)0xa2000000;
 	tasks[0].C = 1;
-	tasks[0].B = 26;
+	tasks[0].B = 0;
 	tasks[0].T = PERIOD_DEV3;
 	tasks[1].lambda = fun2;
 	tasks[1].data = (void*)'2';
 	tasks[1].stack_pos = (void*)0xa1000000;
-	tasks[1].C = 177;
-    	tasks[1].B = 0;
+	tasks[1].C = 75;
+	tasks[1].B = 50;
 	tasks[1].T = PERIOD_DEV2;
 	tasks[2].lambda = fun3;
 	tasks[2].data = (void*)'1';
 	tasks[2].stack_pos = (void*)0xa1800000;
-	tasks[2].C = 75;
-    	tasks[2].B = 50;
+	tasks[2].C = 50;
+	tasks[2].B = 1;
 	tasks[2].T = PERIOD_DEV0;
     mutex = mutex_create();
 

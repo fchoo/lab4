@@ -72,10 +72,10 @@ int assign_schedule(task_t** tasks, size_t num_tasks)
         if (tasks[i]->T == 0) return 0;
         // Sum all utilizations up till current task
         for (j = 0; j <= i; j++) {
-            curr_u += (tasks[j]->C / tasks[j]->T);
+            curr_u += ((double)tasks[j]->C / tasks[j]->T);
         }
         // Add in blocking term
-        curr_u += (tasks[i]->B / tasks[i]->T);
+        curr_u += ((double)tasks[i]->B / tasks[i]->T);
         // Check ub rate for every task
         if (curr_u >= ub_rate_table[i]) return 0;
     }
